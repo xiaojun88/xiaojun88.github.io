@@ -3,11 +3,11 @@
   <title>小太阳&amp;博客</title>
   
   <subtitle>每天进步一点点儿</subtitle>
-  <link href="http://example.com/atom.xml" rel="self"/>
+  <link href="https://xiaojun88.github.io/atom.xml" rel="self"/>
   
-  <link href="http://example.com/"/>
+  <link href="https://xiaojun88.github.io/"/>
   <updated>2022-08-11T09:59:35.289Z</updated>
-  <id>http://example.com/</id>
+  <id>https://xiaojun88.github.io/</id>
   
   <author>
     <name>小太阳</name>
@@ -18,8 +18,8 @@
   
   <entry>
     <title>嘉奖</title>
-    <link href="http://example.com/2022/08/11/%E5%98%89%E5%A5%96/"/>
-    <id>http://example.com/2022/08/11/%E5%98%89%E5%A5%96/</id>
+    <link href="https://xiaojun88.github.io/2022/08/11/%E5%98%89%E5%A5%96/"/>
+    <id>https://xiaojun88.github.io/2022/08/11/%E5%98%89%E5%A5%96/</id>
     <published>2022-08-11T09:51:31.000Z</published>
     <updated>2022-08-11T09:59:35.289Z</updated>
     
@@ -33,17 +33,17 @@
     
     
     
-    <category term="嘉奖" scheme="http://example.com/categories/%E5%98%89%E5%A5%96/"/>
+    <category term="嘉奖" scheme="https://xiaojun88.github.io/categories/%E5%98%89%E5%A5%96/"/>
     
     
-    <category term="8.111" scheme="http://example.com/tags/8-111/"/>
+    <category term="8.111" scheme="https://xiaojun88.github.io/tags/8-111/"/>
     
   </entry>
   
   <entry>
     <title>CVE-2021-44228（Apache Log4j2 查找功能 JNDI 注入）   &lt;!–文章标题–&gt;</title>
-    <link href="http://example.com/2022/08/11/CVE-2021-44228%EF%BC%88Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5%EF%BC%89/"/>
-    <id>http://example.com/2022/08/11/CVE-2021-44228%EF%BC%88Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5%EF%BC%89/</id>
+    <link href="https://xiaojun88.github.io/2022/08/11/CVE-2021-44228%EF%BC%88Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5%EF%BC%89/"/>
+    <id>https://xiaojun88.github.io/2022/08/11/CVE-2021-44228%EF%BC%88Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5%EF%BC%89/</id>
     <published>2022-08-11T04:28:02.826Z</published>
     <updated>2022-08-11T09:19:40.927Z</updated>
     
@@ -58,10 +58,10 @@
     
     
     
-    <category term="漏洞复现" scheme="http://example.com/categories/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"/>
+    <category term="漏洞复现" scheme="https://xiaojun88.github.io/categories/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"/>
     
     
-    <category term="8.11" scheme="http://example.com/tags/8-11/"/>
+    <category term="8.11" scheme="https://xiaojun88.github.io/tags/8-11/"/>
     
   </entry>
   
