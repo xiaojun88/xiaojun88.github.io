@@ -20,7 +20,7 @@
     
     <tags>
       
-      <tag>8.11</tag>
+      <tag>vulhub</tag>
       
     </tags>
     
@@ -29,7 +29,7 @@
   
   
   <entry>
-    <title>CVE-2021-44228（Apache Log4j2 查找功能 JNDI 注入）   &lt;!–文章标题–&gt;</title>
+    <title>CVE-2021-44228（Apache Log4j2 查找功能 JNDI 注入）</title>
     <link href="/2022/08/11/CVE-2021-44228%EF%BC%88Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5%EF%BC%89/"/>
     <url>/2022/08/11/CVE-2021-44228%EF%BC%88Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5%EF%BC%89/</url>
     
@@ -45,7 +45,7 @@
     
     <tags>
       
-      <tag>8.11</tag>
+      <tag>vulhub</tag>
       
     </tags>
     
