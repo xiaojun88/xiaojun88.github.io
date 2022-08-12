@@ -1,6 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>CVE-2018-11776（Struts2 S2-057 远程代码执行漏洞）</title>
+    <url>/2022/08/12/CVE-2018-11776%EF%BC%88Struts2%20S2-057%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%EF%BC%89/</url>
+    <content><![CDATA[<h4 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h4><p>攻击机：192.168.129.130_window10</p>
+<p>靶机 ：192.168.129.128_kali</p>
+<h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p> 定义XML配置时如果没有设置namespace的值，并且上层动作配置中并没有设置或使用通配符namespace时，可能会导致远程代码执行漏洞的发生。同样也可能因为url标签没有设置value和action的值，并且上层动作并没有设置或使用通配符namespace，namespace将由用户从uri传入，并作为OGNL表达式计算，最终造成任意命令执行漏洞。</p>
+<h4 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h4><p>1.alwaysSelectFullNamespace值为true</p>
+<p>2.action元素未设置namespace属性，或使用了通配符</p>
+<p>3.影响版本:&lt;&#x3D;Struts 2.3.34，Struts 2.5.16</p>
+<p>比较鸡肋</p>
+<h4 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h4><ol>
+<li><h5 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h5><p>在靶机中使用docker搭建</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/08/12/CVE-2018-11776%EF%BC%88Struts2%20S2-057%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220812121132495.png" alt="image-20220812121132495"></p>
+</li>
+<li><h5 id="访问靶场：http-192-168-129-130-8080-showcase"><a href="#访问靶场：http-192-168-129-130-8080-showcase" class="headerlink" title="访问靶场：http://192.168.129.130:8080/showcase/"></a>访问靶场：<a href="http://192.168.129.130:8080/showcase/">http://192.168.129.130:8080/showcase/</a></h5></li>
+</ol>
+<p><img src="/2022/08/12/CVE-2018-11776%EF%BC%88Struts2%20S2-057%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220812122212011.png" alt="image-20220812122212011"></p>
+<h5 id="3-漏洞测试"><a href="#3-漏洞测试" class="headerlink" title="3.漏洞测试"></a>3.漏洞测试</h5><p>测试OGNL表达式<code>$&#123;1+1&#125;</code>：</p>
+<p><a href="http://192.168.129.130:8080/showcase/%24%7b1%2b1%7d/actionChain1.action">http://192.168.129.130:8080/showcase/%24%7b1%2b1%7d/actionChain1.action</a></p>
+<p><img src="/2022/08/12/CVE-2018-11776%EF%BC%88Struts2%20S2-057%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%EF%BC%89/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202022-08-12%20123118.png" alt="屏幕截图 2022-08-12 123118"></p>
+<p>可以看到1+1的结果已在Location标头中返回</p>
+<h5 id="4-使用exp"><a href="#4-使用exp" class="headerlink" title="4.使用exp"></a>4.使用exp</h5><p>尝试了很多exp，大多需要python2环境，还是这个好用，需要私聊</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">python struts2-057_cmd.py http://192.168.129.130:8080 id</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/08/12/CVE-2018-11776%EF%BC%88Struts2%20S2-057%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220812143004981.png" alt="image-20220812143004981"></p>
+<p>成功执行命令 </p>
+<h5 id="5-关闭环境"><a href="#5-关闭环境" class="headerlink" title="5.关闭环境"></a>5.关闭环境</h5><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">docker-compose down --rmi all -v</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/08/12/CVE-2018-11776%EF%BC%88Struts2%20S2-057%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220812194854924.png" alt="image-20220812194854924"></p>
+<p>关闭并删除环境</p>
+]]></content>
+      <categories>
+        <category>漏洞复现</category>
+      </categories>
+      <tags>
+        <tag>8.11</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>CVE-2021-44228（Apache Log4j2 查找功能 JNDI 注入）   &lt;!–文章标题–&gt;</title>
     <url>/2022/08/11/CVE-2021-44228%EF%BC%88Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5%EF%BC%89/</url>
     <content><![CDATA[<h4 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h4><p>攻击机：192.168.129.130_window10</p>
@@ -49,17 +89,6 @@
       </categories>
       <tags>
         <tag>8.11</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>嘉奖</title>
-    <url>/2022/08/11/%E5%98%89%E5%A5%96/</url>
-    <content><![CDATA[<h1 id="热烈祝贺宋婉彤小朋友："><a href="#热烈祝贺宋婉彤小朋友：" class="headerlink" title="热烈祝贺宋婉彤小朋友："></a>热烈祝贺宋婉彤小朋友：<img src="/2022/08/11/%E5%98%89%E5%A5%96/image-20220811175723598.png" alt="./image-20220811175723598"></h1>]]></content>
-      <categories>
-        <category>嘉奖</category>
-      </categories>
-      <tags>
-        <tag>8.111</tag>
       </tags>
   </entry>
 </search>
