@@ -43,9 +43,8 @@
     <url>/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/</url>
     <content><![CDATA[<h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p>Tomcat在默认的conf&#x2F;server.xml中配置了2个Connector，一个默认监听8080端口处理HTTP请求，另外一个默认监听8009端口处理AJP请求，方便与其他Web服务器通过AJP协议进行交互。由于Tomcat AJP协议存在缺陷，致使攻击者可以控制三个参数javax.servlet.include.request_uri、javax.servlet.include.path_info、javax.servlet.include.servlet_path，通过构造特定参数读取webapp目录下的任意文件或包含文件，如：webapp 配置文件或源代码等。</p>
 <h4 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h4><p>1.版本为Apache Tomcat 9.x &lt; 9.0.31、8.x &lt; 8.5.51、7.x &lt; 7.0.100、6.x</p>
-<p>2.AJP协议的8009端口开启</p>
-<h4 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h4><p>攻击机：192.168.129.128_window10</p>
-<p>​               192.168.129.130_kali</p>
+<p>2.AJP服务的端口开放（默认8009）</p>
+<h4 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h4><p>攻击机：192.168.129.128_window10、192.168.129.130_kali</p>
 <p>靶机 ：192.168.129.131_centos</p>
 <p>poc：<a href="https://github.com/sv3nbeast/CVE-2020-1938-Tomact-file_include-file_read">https://github.com/sv3nbeast/CVE-2020-1938-Tomact-file_include-file_read</a></p>
 <h5 id="1-环境搭建"><a href="#1-环境搭建" class="headerlink" title="1.环境搭建"></a>1.环境搭建</h5><p>在靶机中使用docker搭建</p>
