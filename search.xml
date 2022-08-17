@@ -1,6 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>CVE-2018-11776（Struts2 S2-057 远程代码执行漏洞）</title>
+    <url>/2022/08/12/CVE-2018-11776%EF%BC%88Struts2%20S2-057%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%EF%BC%89/</url>
+    <content><![CDATA[<h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p> 定义XML配置时如果没有设置namespace的值，并且上层动作配置中并没有设置或使用通配符namespace时，可能会导致远程代码执行漏洞的发生。同样也可能因为url标签没有设置value和action的值，并且上层动作并没有设置或使用通配符namespace，namespace将由用户从uri传入，并作为OGNL表达式计算，最终造成任意命令执行漏洞。</p>
+<h4 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h4><p>1.alwaysSelectFullNamespace值为true</p>
+<p>2.action元素未设置namespace属性，或使用了通配符</p>
+<p>3.影响版本:&lt;&#x3D;Struts 2.3.34，Struts 2.5.16</p>
+<p>（比较鸡肋）</p>
+<h4 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h4><p>攻击机：192.168.129.130_window10</p>
+<p>靶机 ：192.168.129.128_kali</p>
+<h4 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h4><h5 id="1-环境搭建"><a href="#1-环境搭建" class="headerlink" title="1.环境搭建"></a>1.环境搭建</h5><p>在靶机中使用docker搭建</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">docker-compose build #进行编译<br><br>docker-compose up -d #运行靶场<br></code></pre></td></tr></table></figure>
+
+<p><img src="/2022/08/12/CVE-2018-11776%EF%BC%88Struts2%20S2-057%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220812121132495.png" alt="image-20220812121132495"></p>
+<h5 id="2-漏洞验证"><a href="#2-漏洞验证" class="headerlink" title="2.漏洞验证"></a>2.漏洞验证</h5><p>访问靶机</p>
+<p><a href="http://192.168.129.130:8080/showcase/">http://192.168.129.130:8080/showcase/</a></p>
+<p><img src="/2022/08/12/CVE-2018-11776%EF%BC%88Struts2%20S2-057%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220812122212011.png" alt="image-20220812122212011"></p>
+<p>测试OGNL表达式<code>$&#123;1+1&#125;</code>：</p>
+<p><a href="http://192.168.129.130:8080/showcase/%24%7b1%2b1%7d/actionChain1.action">http://192.168.129.130:8080/showcase/%24%7b1%2b1%7d/actionChain1.action</a></p>
+<p><img src="/2022/08/12/CVE-2018-11776%EF%BC%88Struts2%20S2-057%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%EF%BC%89/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202022-08-12%20123118.png" alt="屏幕截图 2022-08-12 123118"></p>
+<p>可以看到1+1的结果已在Location标头中返回</p>
+<h5 id="3-漏洞利用"><a href="#3-漏洞利用" class="headerlink" title="3.漏洞利用"></a>3.漏洞利用</h5><p>尝试了很多exp，大多需要python2环境，还是这个好用，需要私聊</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">python struts2-057_cmd.py http://192.168.129.130:8080 id<br></code></pre></td></tr></table></figure>
+
+<p><img src="/2022/08/12/CVE-2018-11776%EF%BC%88Struts2%20S2-057%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220812143004981.png" alt="image-20220812143004981"></p>
+<p>成功执行命令 </p>
+<h5 id="4-关闭环境"><a href="#4-关闭环境" class="headerlink" title="4.关闭环境"></a>4.关闭环境</h5><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">docker-compose down --rmi all -v #关闭并删除环境<br></code></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>漏洞复现</category>
+      </categories>
+      <tags>
+        <tag>vulhub</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>CVE-2020-1938（Aapache Tomcat AJP 任意文件读取包含漏洞）</title>
     <url>/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/</url>
     <content><![CDATA[<h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p>Tomcat在默认的conf&#x2F;server.xml中配置了2个Connector，一个默认监听8080端口处理HTTP请求，另外一个默认监听8009端口处理AJP请求，方便与其他Web服务器通过AJP协议进行交互。由于Tomcat AJP协议存在缺陷，致使攻击者可以控制三个参数javax.servlet.include.request_uri、javax.servlet.include.path_info、javax.servlet.include.servlet_path，通过构造特定参数读取webapp目录下的任意文件或包含文件，如：webapp 配置文件或源代码等。</p>
@@ -45,41 +80,6 @@
 <p><img src="/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220815005523753.png" alt="image-20220815005523753"></p>
 <h5 id="4-关闭环境"><a href="#4-关闭环境" class="headerlink" title="4.关闭环境"></a>4.关闭环境</h5><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">docker-compose down --rmi all -v #关闭并删除环境<br></code></pre></td></tr></table></figure>
 
-]]></content>
-      <categories>
-        <category>漏洞复现</category>
-      </categories>
-      <tags>
-        <tag>vulhub</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>CVE-2018-11776（Struts2 S2-057 远程代码执行漏洞）</title>
-    <url>/2022/08/12/CVE-2018-11776%EF%BC%88Struts2%20S2-057%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%EF%BC%89/</url>
-    <content><![CDATA[<h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p> 定义XML配置时如果没有设置namespace的值，并且上层动作配置中并没有设置或使用通配符namespace时，可能会导致远程代码执行漏洞的发生。同样也可能因为url标签没有设置value和action的值，并且上层动作并没有设置或使用通配符namespace，namespace将由用户从uri传入，并作为OGNL表达式计算，最终造成任意命令执行漏洞。</p>
-<h4 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h4><p>1.alwaysSelectFullNamespace值为true</p>
-<p>2.action元素未设置namespace属性，或使用了通配符</p>
-<p>3.影响版本:&lt;&#x3D;Struts 2.3.34，Struts 2.5.16</p>
-<p>（比较鸡肋）</p>
-<h4 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h4><p>攻击机：192.168.129.130_window10</p>
-<p>靶机 ：192.168.129.128_kali</p>
-<h4 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h4><h5 id="1-环境搭建"><a href="#1-环境搭建" class="headerlink" title="1.环境搭建"></a>1.环境搭建</h5><p>在靶机中使用docker搭建</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">docker-compose build #进行编译<br><br>docker-compose up -d #运行靶场<br></code></pre></td></tr></table></figure>
-
-<p><img src="/2022/08/12/CVE-2018-11776%EF%BC%88Struts2%20S2-057%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220812121132495.png" alt="image-20220812121132495"></p>
-<h5 id="2-漏洞验证"><a href="#2-漏洞验证" class="headerlink" title="2.漏洞验证"></a>2.漏洞验证</h5><p>访问靶机</p>
-<p><a href="http://192.168.129.130:8080/showcase/">http://192.168.129.130:8080/showcase/</a></p>
-<p><img src="/2022/08/12/CVE-2018-11776%EF%BC%88Struts2%20S2-057%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220812122212011.png" alt="image-20220812122212011"></p>
-<p>测试OGNL表达式<code>$&#123;1+1&#125;</code>：</p>
-<p><a href="http://192.168.129.130:8080/showcase/%24%7b1%2b1%7d/actionChain1.action">http://192.168.129.130:8080/showcase/%24%7b1%2b1%7d/actionChain1.action</a></p>
-<p><img src="/2022/08/12/CVE-2018-11776%EF%BC%88Struts2%20S2-057%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%EF%BC%89/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202022-08-12%20123118.png" alt="屏幕截图 2022-08-12 123118"></p>
-<p>可以看到1+1的结果已在Location标头中返回</p>
-<h5 id="3-漏洞利用"><a href="#3-漏洞利用" class="headerlink" title="3.漏洞利用"></a>3.漏洞利用</h5><p>尝试了很多exp，大多需要python2环境，还是这个好用，需要私聊</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">python struts2-057_cmd.py http://192.168.129.130:8080 id<br></code></pre></td></tr></table></figure>
-
-<p><img src="/2022/08/12/CVE-2018-11776%EF%BC%88Struts2%20S2-057%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220812143004981.png" alt="image-20220812143004981"></p>
-<p>成功执行命令 </p>
-<h5 id="4-关闭环境"><a href="#4-关闭环境" class="headerlink" title="4.关闭环境"></a>4.关闭环境</h5><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">docker-compose down --rmi all -v #关闭并删除环境<br></code></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>漏洞复现</category>
