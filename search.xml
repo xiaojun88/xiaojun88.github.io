@@ -67,6 +67,27 @@
       </tags>
   </entry>
   <entry>
+    <title>Weblogic 任意文件上传漏洞（CVE-2018-2894）</title>
+    <url>/2022/08/19/CVE-2018-2894%EF%BC%88Weblogic%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E%EF%BC%89/</url>
+    <content><![CDATA[<h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p>weblogic管理端未授权的两个页面（ws_utc&#x2F;begin.do和&#x2F;ws_utc&#x2F;config.do）存在任意上传jsp文件漏洞，进而获取服务器权限</p>
+<h4 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h4><p>1.weblogic 10.3.6.0、12.1.3.0、12.2.1.2、12.2.1.3</p>
+<p>2.Web Service Test Page开启</p>
+<h4 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h4><p>攻击机：192.168.129.128_window10</p>
+<p>靶机 ：192.168.129.130_kali</p>
+<h4 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h4><h5 id="1-环境搭建"><a href="#1-环境搭建" class="headerlink" title="1.环境搭建"></a>1.环境搭建</h5><p>在靶机中使用docker搭建</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell">docker-compose build #进行编译<br><br>docker-compose up -d #运行靶场<br></code></pre></td></tr></table></figure>
+
+<p>2.漏洞验证</p>
+<p>待续</p>
+]]></content>
+      <categories>
+        <category>漏洞复现</category>
+      </categories>
+      <tags>
+        <tag>vulhub</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Aapache Tomcat AJP 任意文件读取包含漏洞（CVE-2020-1938）</title>
     <url>/2022/08/14/CVE-2020-1938%EF%BC%88Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%89/</url>
     <content><![CDATA[<h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p>Tomcat在默认的conf&#x2F;server.xml中配置了2个Connector，一个默认监听8080端口处理HTTP请求，另外一个默认监听8009端口处理AJP请求，方便与其他Web服务器通过AJP协议进行交互。由于Tomcat AJP协议存在缺陷，致使攻击者可以控制三个参数javax.servlet.include.request_uri、javax.servlet.include.path_info、javax.servlet.include.servlet_path，通过构造特定参数读取webapp目录下的任意文件或包含文件，如：webapp 配置文件或源代码等。</p>
