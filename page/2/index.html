@@ -228,6 +228,67 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2022/08/12/CVE-2018-11776%EF%BC%88Struts2%20S2-057%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%EF%BC%89/" target="_self">
+          Struts2 S2-057 远程代码执行漏洞(CVE-2018-11776)
+        </a>
+      </h1>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/2022/08/12/CVE-2018-11776%EF%BC%88Struts2%20S2-057%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%EF%BC%89/" target="_self">
+        <div>
+          漏洞原理 定义XML配置时如果没有设置namespace的值，并且上层动作配置中并没有设置或使用通配符namespace时，可能会导致远程代码执行漏洞的发生。同样也可能因为url标签没有设置value和action的值，并且上层动作并没有设置或使用通配符namespace，namespace将由用户从uri传入，并作为OGNL表达式计算，最终造成任意命令执行漏洞。 利用条件1.alwaysSele
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2022-08-12 11:36" pubdate>
+              2022-08-12
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" class="category-chain-item">漏洞复现</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/struts2/">#struts2</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2022/08/11/CVE-2021-44228%EF%BC%88Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5%EF%BC%89/" target="_self">
           Apache Log4j2 查找功能 JNDI 注入(CVE-2021-44228)
         </a>
